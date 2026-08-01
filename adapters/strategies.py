@@ -33,11 +33,16 @@ def _api_key() -> str:
     key = os.environ.get("ANTHROPIC_API_KEY", "")
     if key:
         return key
-    env = Path.home() / "src/nano-claw/.env"
-    if env.exists():
-        found = re.search(r"^ANTHROPIC_API_KEY=(.+)$", env.read_text(), re.M)
-        if found:
-            return found.group(1).strip()
+    # Fall back to a .env beside the project, or one named by BAKEOFF_ENV_FILE.
+    candidates = [Path(os.environ["BAKEOFF_ENV_FILE"])] if os.environ.get(
+        "BAKEOFF_ENV_FILE"
+    ) else []
+    candidates.append(Path(__file__).resolve().parent.parent / ".env")
+    for env in candidates:
+        if env.exists():
+            found = re.search(r"^ANTHROPIC_API_KEY=(.+)$", env.read_text(), re.M)
+            if found:
+                return found.group(1).strip()
     raise RuntimeError("no ANTHROPIC_API_KEY available")
 
 
@@ -115,8 +120,7 @@ class IterativeLoop:
     vocabulary. It stops when it reports nothing further is needed, which is
     also the signal a system would use to abstain.
 
-    This is the pattern the multi-hop literature supports, and the one the
-    deep-reasoning path in nano-claw is already shaped for.
+    This is the pattern the multi-hop retrieval literature supports.
     """
 
     def __init__(self, engine, rounds: int = 3, per_round: int = 3):

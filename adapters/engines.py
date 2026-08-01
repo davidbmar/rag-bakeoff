@@ -1,21 +1,14 @@
 """Adapters for the engines that can actually take this corpus.
 
-Of the six "upload documents, ask questions" implementations in the portfolio,
-only three can ingest arbitrary PDFs and be queried over HTTP with the same
-corpus. The others are excluded for stated reasons rather than quietly:
+Two production search backends and a no-retrieval control. Both backends are
+real systems rather than reference implementations, which is the point: the
+question was whether the engines already in service could answer this class of
+question, not whether a textbook one could.
 
-  github-portfolio-search  indexes GitHub repos through the GitHub API; there
-                           is no path for an external PDF.
-  browser-RAG (FSM/Iris)   runs entirely in the browser over prebuilt JSONL
-                           conversation packs; no server, no document upload.
-  persona-rag              can ingest, but only PDFs converted into its own
-                           evidence-item JSON schema, and it has been idle
-                           since May. Includable with a day of adapter work;
-                           excluded here to keep the comparison honest about
-                           what was actually run.
-  evidence-qa              private and not cloned locally. On paper it is the
-                           closest architecture to right (BGE + cross-encoder
-                           + abstention) and is the one worth cloning next.
+Other systems were considered and excluded for stated reasons rather than
+quietly — see "Excluded, and why" in the README. The rule applied was that an
+engine has to ingest the same PDFs and be queried over HTTP, or the comparison
+is measuring adapter effort rather than retrieval.
 """
 
 from __future__ import annotations
@@ -44,10 +37,15 @@ def _score_of(evidence: dict) -> float:
     return float(score) if isinstance(score, (int, float)) else 0.0
 
 
-class IntelligencePlatform:
-    """The engine live in production today: SQLite FTS5 + BM25, lexical only."""
+class KeywordSearch:
+    """SQLite FTS5 + BM25 — word overlap, no embeddings anywhere.
 
-    name = "intelligence-platform"
+    Scores by which of the query's terms a passage contains, rare terms
+    weighting more heavily. Decades old, extremely fast, and the default in
+    most databases.
+    """
+
+    name = "keyword search (BM25)"
     retrieval = "lexical (BM25/FTS5)"
 
     def __init__(self, base_url: str = "http://127.0.0.1:8000", tenant: str = "bakeoff"):
@@ -122,10 +120,14 @@ class IntelligencePlatform:
             return Retrieved(error=f"{type(exc).__name__}: {exc}")
 
 
-class VoiceOptimalRAG:
-    """Dense vectors: nomic-embed-text-v1.5 (768d) in LanceDB."""
+class SemanticSearch:
+    """Dense vectors: nomic-embed-text-v1.5 (768d) in LanceDB.
 
-    name = "voice-optimal-RAG"
+    Embeds passages and the query into one space and returns nearest
+    neighbours, so paraphrase is handled where keyword matching fails.
+    """
+
+    name = "semantic search (embeddings)"
     retrieval = "dense (nomic-embed-text-v1.5)"
 
     def __init__(self, base_url: str = "http://127.0.0.1:8100"):

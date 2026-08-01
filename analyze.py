@@ -13,8 +13,8 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).parent
-LEXICAL = "intelligence-platform"
-DENSE = "voice-optimal-RAG"
+LEXICAL = "keyword search (BM25)"
+DENSE = "semantic search (embeddings)"
 
 
 def load(k: int) -> dict:

@@ -3,3 +3,7 @@ results/uploads/
 results/platform.db*
 corpus/*.pdf
 corpus/*.txt
+__pycache__/
+*.pyc
+results/*.log
+!corpus/README.md

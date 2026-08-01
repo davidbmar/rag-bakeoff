@@ -32,7 +32,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 
-from adapters.engines import FullContext, IntelligencePlatform, VoiceOptimalRAG  # noqa: E402
+from adapters.engines import FullContext, KeywordSearch, SemanticSearch  # noqa: E402
 from adapters.strategies import HyDE, IterativeLoop  # noqa: E402
 
 ROOT = Path(__file__).parent
@@ -71,9 +71,9 @@ def main() -> int:
     args = parser.parse_args()
 
     spec = json.loads((ROOT / "questions.json").read_text())
-    dense = VoiceOptimalRAG()
+    dense = SemanticSearch()
     engines = [
-        IntelligencePlatform(base_url="http://127.0.0.1:8124"),
+        KeywordSearch(base_url="http://127.0.0.1:8124"),
         dense,
         # Query-side strategies over the strongest single retriever. Both are
         # wrappers, not new engines — the point being that neither requires

@@ -59,8 +59,8 @@ Engines are declared in `adapters/engines.py`. Adding one is a class with
 
 | strategy | recall | critical | answerable | passages | latency |
 |---|---|---|---|---|---|
-| intelligence-platform (BM25) | 54% | 47% | 4 / 11 | 5 | ~0s |
-| voice-optimal-RAG (dense) | 71% | 64% | 6 / 11 | 5 | ~0s |
+| keyword search (BM25/FTS5) | 54% | 47% | 4 / 11 | 5 | ~0s |
+| semantic search (nomic-embed-v1.5) | 71% | 64% | 6 / 11 | 5 | ~0s |
 | dense at equal budget (k=17) | 85% | 86% | 9 / 11 | 17 | ~0s |
 | **HyDE → dense** | **93%** | **95%** | **10 / 11** | **5** | 4s |
 | **loop×3 → dense** | **100%** | **100%** | **11 / 11** | 17 | 6s |
@@ -121,10 +121,18 @@ question genuinely spans several rules.
 
 ## Excluded, and why
 
-`github-portfolio-search` ingests GitHub repos through the API with no path for
-an external PDF. `browser-RAG` (FSM/Iris) runs in the browser over prebuilt
-JSONL packs with no server. `persona-rag` can ingest but only via its own
-evidence-item JSON schema and has been idle since May — includable with about a
-day of adapter work. `evidence-qa` is private and not cloned; on paper it is
-the closest architecture to right (BGE + cross-encoder + abstention) and is the
-one worth cloning next.
+Three further systems were available but could not take this corpus on equal
+terms, and are listed rather than quietly dropped: one indexes source
+repositories through an API with no path for an external PDF; one runs entirely
+in the browser over prebuilt conversation packs with no server; one can ingest
+but only through its own bespoke evidence schema. A fourth — the most
+interesting architecturally, combining strong embeddings with cross-encoder
+reranking and explicit abstention — was not available to test and remains the
+obvious next candidate.
+
+## Adding your own engine
+
+A class with `health`, `ingest` and `retrieve`. See `adapters/base.py` for the
+contract and `adapters/engines.py` for three worked examples. Strategies like
+HyDE and the loop wrap an engine rather than replacing it — see
+`adapters/strategies.py`.
