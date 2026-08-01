@@ -32,6 +32,11 @@
           letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
   h2 { font-size: 1.35rem; margin: 3rem 0 .9rem; letter-spacing: -.01em; }
   h3 { font-size: 1.05rem; margin: 2rem 0 .5rem; }
+  h4 {
+    font: 600 .74rem/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+    letter-spacing: .08em; text-transform: uppercase; color: var(--muted);
+    margin: 1.75rem 0 .6rem;
+  }
   p, li { font-size: 1.02rem; }
   a { color: var(--accent); }
   code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
@@ -215,11 +220,57 @@
 <h3>2. Semantic search (embeddings)</h3>
 <p>
   The modern default. A neural model converts every passage into a list of
-  numbers — a vector — positioned so that passages meaning similar things land
-  near each other. Your question is converted the same way, and the search
-  returns whatever is nearest. This genuinely handles paraphrase: “car” finds
-  “automobile”. The open question of this exercise is whether it handles
-  something harder than paraphrase.
+  numbers — a <strong>vector</strong> — chosen so that passages meaning similar
+  things end up with similar numbers. Your question is converted the same way,
+  and the search returns whichever passages are numerically nearest. This
+  genuinely handles paraphrase: search “car” and it finds a passage that only
+  says “automobile”, because the two land in nearly the same place.
+</p>
+
+<h4>Why the literature calls this “dense”</h4>
+
+<p>
+  You will meet the terms <em>sparse retrieval</em> and <em>dense
+  retrieval</em> constantly, and they sound far more exotic than they are. Both
+  describe a passage as a list of numbers. They differ only in the shape of
+  that list.
+</p>
+
+<p>
+  <strong>Sparse</strong> is keyword search. Picture a checklist with one box
+  for every word in the language — call it 50,000 boxes. To represent the
+  passage <em>“the rental loss is passive”</em> you tick five boxes and leave
+  49,995 empty. Almost the entire list is zeros, which is what <em>sparse</em>
+  means. Each slot has an obvious meaning: box 8,412 <em>is</em> the word
+  “rental”.
+</p>
+
+<p>
+  <strong>Dense</strong> is embedding search. The same passage becomes a list of
+  768 numbers, and almost none of them are zero — every one carries some
+  fraction of the meaning. That is the whole reason for the word: no empty
+  slots. The trade is that no individual number means anything you can name.
+  There is no “rental” slot. Meaning is smeared across all 768, and only the
+  <em>overall position</em> is interpretable.
+</p>
+
+<div class="callout">
+  <p>
+    So <strong>“dense” is not a claim about quality</strong> — it is a
+    description of the numbers. Dense retrieval, vector search, semantic search
+    and embedding search all name the same thing. When this document says
+    “semantic search”, the papers say “dense retrieval”.
+  </p>
+</div>
+
+<p>
+  That difference is exactly why the two fail differently. Sparse can only match
+  a word you actually typed, so it is unbeatable on exact terms — a form number,
+  a part code — and helpless when your words are wrong. Dense matches proximity
+  in meaning-space, so it survives paraphrase, but it can only be as close to the
+  answer as your question already was. The open question of this exercise is
+  whether that is enough when the question is not a paraphrase of the answer at
+  all.
 </p>
 
 <h3>3. HyDE — searching with a made-up answer</h3>
