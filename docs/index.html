@@ -82,7 +82,7 @@
     it — and five techniques measured against it to find out which ones can
     cross that gap.
   </p>
-  <p class="meta">rag-bakeoff · 13 questions · 5 IRS publications · 393k tokens</p>
+  <p class="meta">rag-bakeoff · 33 questions · 5 IRS publications · 393k tokens</p>
 </header>
 
 <h2>The problem</h2>
@@ -358,22 +358,22 @@
   </thead>
   <tbody>
     <tr><td>Keyword search</td><td>BM25 — word overlap</td>
-        <td class="num">54%</td><td class="num">47%</td><td class="num">4 / 11</td>
-        <td class="num">5</td><td class="num">15 ms</td></tr>
+        <td class="num">61%</td><td class="num">60%</td><td class="num">14 / 28</td>
+        <td class="num">5</td><td class="num">~0 ms</td></tr>
     <tr><td>Semantic search</td><td>embeddings — meaning similarity</td>
-        <td class="num">71%</td><td class="num">64%</td><td class="num">6 / 11</td>
-        <td class="num">5</td><td class="num">48 ms</td></tr>
-    <tr class="baseline"><td>Semantic, 3× more passages</td><td>same, returning 17 instead of 5</td>
-        <td class="num">85%</td><td class="num">86%</td><td class="num">9 / 11</td>
-        <td class="num">17</td><td class="num">~50 ms</td></tr>
+        <td class="num">63%</td><td class="num">66%</td><td class="num">16 / 28</td>
+        <td class="num">5</td><td class="num">~0 ms</td></tr>
     <tr class="win"><td>HyDE → semantic</td><td>search with a <em>drafted answer</em>, not the question</td>
-        <td class="num">93%</td><td class="num">95%</td><td class="num">10 / 11</td>
-        <td class="num">5</td><td class="num">4.0 s</td></tr>
+        <td class="num">82%</td><td class="num">80%</td><td class="num">20 / 28</td>
+        <td class="num">5</td><td class="num">3.9 s</td></tr>
     <tr class="win"><td>Iterative loop → semantic</td><td>search, read, notice what's missing, search again</td>
-        <td class="num">100%</td><td class="num">100%</td><td class="num">11 / 11</td>
-        <td class="num">17</td><td class="num">6.0 s</td></tr>
-    <tr class="baseline"><td>No search at all</td><td>put the two relevant publications in the prompt</td>
-        <td class="num">100%</td><td class="num">100%</td><td class="num">11 / 11</td>
+        <td class="num">95%</td><td class="num">96%</td><td class="num">27 / 28</td>
+        <td class="num">19</td><td class="num">6.8 s</td></tr>
+    <tr class="baseline"><td>No search — 2 publications</td><td>the ones a human judged relevant, ~80k tokens</td>
+        <td class="num">95%</td><td class="num">93%</td><td class="num">24 / 28</td>
+        <td class="num">—</td><td class="num">~0 ms</td></tr>
+    <tr class="baseline"><td>No search — all 5 publications</td><td>everything, ~393k tokens</td>
+        <td class="num">100%</td><td class="num">100%</td><td class="num">28 / 28</td>
         <td class="num">—</td><td class="num">~0 ms</td></tr>
   </tbody>
 </table>
@@ -446,7 +446,7 @@ round 3: passive activity loss limitation deduction ordering rules
   </p>
 </div>
 
-<h2>Seven things worth keeping</h2>
+<h2>Nine things worth keeping</h2>
 
 <div class="lesson">
   <span class="lesson-n">01</span>
@@ -461,12 +461,17 @@ round 3: passive activity loss limitation deduction ordering rules
 
 <div class="lesson">
   <span class="lesson-n">02</span>
-  <h3>Better embeddings help and do not save you</h3>
+  <h3>Better embeddings help, and do not save you</h3>
   <p>
-    Semantic search beat keyword search by 17 points — real, and worth having. It still failed the
-    question that prompted the whole exercise, scoring <span class="bad">14%</span>
-    where plain keyword search managed 43%. No embedding model fixes a query that
-    does not contain the concept.
+    Across all 33 questions semantic search beat keyword search by two points,
+    63% against 61%. And on the class that actually discriminates — where the
+    asker's words never appear in the governing text — they score
+    <span class="bad">identically: 4 of 9 each</span>.
+  </p>
+  <p>
+    That is the sharpest result in the project. The upgrade everyone reaches for
+    first buys nothing on the questions that were failing, because similarity can
+    only be measured against what you handed it.
   </p>
 </div>
 
@@ -474,9 +479,9 @@ round 3: passive activity loss limitation deduction ordering rules
   <span class="lesson-n">03</span>
   <h3>Keyword and semantic search fail on different questions</h3>
   <p>
-    Keyword search alone answered 4 of 11, semantic 6, the two combined 7. That is the honest case
-    for hybrid retrieval — and also its ceiling, assuming perfect fusion. Still
-    four short of simply loading the right two publications.
+    Keyword answered 14 of 28, semantic 16, and they fail on different questions —
+    which is the honest case for hybrid retrieval, and also its ceiling. Neither
+    channel is close to what the query-side strategies reach.
   </p>
 </div>
 
@@ -484,11 +489,11 @@ round 3: passive activity loss limitation deduction ordering rules
   <span class="lesson-n">04</span>
   <h3>Count the passages, or repeated searching flatters itself</h3>
   <p>
-    The loop went from 6/11 to 11/11 — but it saw 17 passages against five. At
-    <em>equal budget</em>, a single semantic search scores 9/11. So <span class="good">+3
-    was just seeing more</span> and only +2 was the loop. Any comparison that
-    does not report passages seen is measuring context size and calling it
-    intelligence.
+    The loop reached 27 of 28 — but it saw 19 passages against five. Some of
+    that gain is simply reading more, which is why <code>passages_seen</code> is
+    recorded for every strategy and why a single search at the loop's own budget
+    is run as a separate row. Any comparison that omits this is measuring
+    context size and calling it intelligence.
   </p>
 </div>
 
@@ -496,7 +501,7 @@ round 3: passive activity loss limitation deduction ordering rules
   <span class="lesson-n">05</span>
   <h3>A score that cannot discriminate cannot abstain</h3>
   <p>
-    Two of the thirteen questions were deliberately unanswerable from this
+    Five of the thirty-three questions were deliberately unanswerable from this
     corpus, to see whether the systems could tell. The keyword engine reports a
     relevance score rescaled per query, so its best result is always exactly
     1.000 no matter how bad it is. On the underlying raw score, <em>“what is the
@@ -513,10 +518,11 @@ round 3: passive activity loss limitation deduction ordering rules
   <span class="lesson-n">06</span>
   <h3>Long context is the baseline everyone skips</h3>
   <p>
-    Two publications, 80k tokens, no retrieval, no chunking, no infrastructure:
-    100% on every question. If the corpus fits in the window, retrieval is a
-    premature optimisation — and it is worth checking whether it fits before
-    building anything.
+    All five publications, 393k tokens, no retrieval, no chunking, no
+    infrastructure: 28 of 28. If the corpus fits in the window, retrieval is a
+    premature optimisation, and it is worth checking whether it fits before
+    building anything. The cost is real though — roughly 78× the context of the
+    loop, for one more question.
   </p>
 </div>
 
@@ -532,6 +538,41 @@ round 3: passive activity loss limitation deduction ordering rules
     written-down answers takes a day to build and settles it permanently — and
     it is the cheapest thing here to keep, because it outlives every engine it
     judges.
+  </p>
+</div>
+
+<div class="lesson">
+  <span class="lesson-n">08</span>
+  <h3>Curating the corpus is a guess about what will be asked</h3>
+  <p>
+    The no-retrieval baseline was run twice. Given all five publications it
+    answers everything. Curated down to the two a human judged relevant — the
+    version that looks sensible, and cheap at 80k tokens — it drops to 24 of 28.
+  </p>
+  <p>
+    The four it misses are <em>exactly</em> the questions whose answers live in
+    the publications the curation excluded. That is not a retrieval failure; it
+    is the librarian being wrong before the search begins, and it fails silently
+    in the same way everything else here does.
+  </p>
+</div>
+
+<div class="lesson">
+  <span class="lesson-n">09</span>
+  <h3>You cannot retrieve a negative</h3>
+  <p>
+    One question was answered only by putting the whole corpus in the prompt:
+    <em>“Can I deduct the value of the time I spend managing my rentals?”</em>
+    The answer is that no such deduction exists — and no passage says so.
+    Publications describe what the rules <em>are</em>; the absence of a rule is
+    written nowhere.
+  </p>
+  <p>
+    Retrieval can only return text that exists. For any question whose true
+    answer is “there is no such thing”, a retrieval system will return the
+    nearest plausible material and answer from it — confidently, and wrongly.
+    No amount of hybrid, reranking or looping fixes this class, because there is
+    nothing to find.
   </p>
 </div>
 
@@ -552,9 +593,11 @@ round 3: passive activity loss limitation deduction ordering rules
     board by a distance.
   </li>
   <li>
-    <strong>Loop only for questions that genuinely span several rules.</strong>
-    It buys the last question and costs 3× the passages and 6 seconds. Route to
-    it rather than defaulting to it.
+    <strong>Loop for questions that genuinely span several rules.</strong> On the
+    harder question set it reaches 27 of 28 — perfect on both the vocabulary-gap
+    and multi-hop classes, where every single-shot approach collapses. It costs
+    ~4× the passages and about six seconds, so route to it rather than
+    defaulting to it, and narrate while it runs.
   </li>
   <li>
     <strong>Take the loop's stopping signal for free.</strong> When it reports
@@ -571,7 +614,7 @@ round 3: passive activity loss limitation deduction ordering rules
     still reason badly.
   </li>
   <li>
-    One domain, one corpus, 13 questions. Tax guidance is unusually
+    One domain, one corpus, 33 questions. Tax guidance is unusually
     well-structured; narrative or conversational corpora may behave differently.
   </li>
   <li>
