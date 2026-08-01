@@ -1,0 +1,618 @@
+{
+  "k": 5,
+  "engines": {
+    "intelligence-platform": {
+      "retrieval": "lexical (BM25/FTS5)",
+      "summary": {
+        "mean_recall": 0.538961038961039,
+        "mean_critical_recall": 0.46969696969696967,
+        "questions_with_all_criticals": 4,
+        "questions_scored": 11,
+        "discrimination": 2.383025561463702
+      },
+      "results": [
+        {
+          "id": "rental-below-zero",
+          "type": "strategy",
+          "found": [
+            "$25,000 special allowance",
+            "suspended / carryforward",
+            "Form 8582"
+          ],
+          "missing": [
+            "passive activity loss",
+            "MAGI phase-out",
+            "at-risk limits",
+            "real estate professional"
+          ],
+          "critical_missing": [
+            "passive activity loss",
+            "MAGI phase-out"
+          ],
+          "recall": 0.42857142857142855,
+          "critical_recall": 0.3333333333333333,
+          "top_score": 21.44891708557251,
+          "latency_ms": 15.230894088745117
+        },
+        {
+          "id": "suspended-on-sale",
+          "type": "strategy",
+          "found": [],
+          "missing": [
+            "passive activity loss",
+            "disposition releases losses",
+            "suspended / carryforward"
+          ],
+          "critical_missing": [
+            "passive activity loss",
+            "disposition releases losses",
+            "suspended / carryforward"
+          ],
+          "recall": 0.0,
+          "critical_recall": 0.0,
+          "top_score": 17.71375609848858,
+          "latency_ms": 15.465021133422852
+        },
+        {
+          "id": "skip-depreciation",
+          "type": "strategy",
+          "found": [
+            "allowed or allowable",
+            "depreciation recapture",
+            "basis reduction"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 19.060536769800162,
+          "latency_ms": 14.303922653198242
+        },
+        {
+          "id": "offset-salary",
+          "type": "vocabulary-gap",
+          "found": [
+            "passive activity loss"
+          ],
+          "missing": [
+            "nonpassive income",
+            "$25,000 special allowance"
+          ],
+          "critical_missing": [
+            "nonpassive income",
+            "$25,000 special allowance"
+          ],
+          "recall": 0.3333333333333333,
+          "critical_recall": 0.3333333333333333,
+          "top_score": 14.09285783766848,
+          "latency_ms": 14.837026596069336
+        },
+        {
+          "id": "time-spent-managing",
+          "type": "vocabulary-gap",
+          "found": [
+            "material participation"
+          ],
+          "missing": [
+            "real estate professional",
+            "750 hours"
+          ],
+          "critical_missing": [
+            "real estate professional"
+          ],
+          "recall": 0.3333333333333333,
+          "critical_recall": 0.5,
+          "top_score": 12.952578667900612,
+          "latency_ms": 13.701200485229492
+        },
+        {
+          "id": "converted-home",
+          "type": "multi-hop",
+          "found": [],
+          "missing": [
+            "fair market value at conversion",
+            "adjusted basis",
+            "lesser of"
+          ],
+          "critical_missing": [
+            "fair market value at conversion",
+            "adjusted basis"
+          ],
+          "recall": 0.0,
+          "critical_recall": 0.0,
+          "top_score": 18.930344789673967,
+          "latency_ms": 13.123035430908203
+        },
+        {
+          "id": "depreciate-then-sell",
+          "type": "multi-hop",
+          "found": [
+            "gain on disposition"
+          ],
+          "missing": [
+            "depreciation recapture",
+            "adjusted basis"
+          ],
+          "critical_missing": [
+            "depreciation recapture",
+            "adjusted basis"
+          ],
+          "recall": 0.3333333333333333,
+          "critical_recall": 0.0,
+          "top_score": 10.56592840085083,
+          "latency_ms": 13.196945190429688
+        },
+        {
+          "id": "max-allowance",
+          "type": "factual",
+          "found": [
+            "$25,000 special allowance",
+            "special allowance"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 21.6624621220149,
+          "latency_ms": 12.193918228149414
+        },
+        {
+          "id": "phaseout-threshold",
+          "type": "factual",
+          "found": [
+            "modified adjusted gross income"
+          ],
+          "missing": [
+            "$150,000"
+          ],
+          "critical_missing": [
+            "$150,000"
+          ],
+          "recall": 0.5,
+          "critical_recall": 0.0,
+          "top_score": 19.750622636856917,
+          "latency_ms": 13.346195220947266
+        },
+        {
+          "id": "recovery-period",
+          "type": "factual",
+          "found": [
+            "27.5 years",
+            "residential rental"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 15.156734073262031,
+          "latency_ms": 35.39681434631348
+        },
+        {
+          "id": "vacation-home-days",
+          "type": "factual",
+          "found": [
+            "14 days",
+            "10% of days rented",
+            "personal use"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 15.168670847764613,
+          "latency_ms": 13.988018035888672
+        },
+        {
+          "id": "out-of-corpus-c-corp",
+          "type": "should-abstain",
+          "top_score": 13.368201999555685,
+          "chunks": 5
+        },
+        {
+          "id": "out-of-corpus-rd-credit",
+          "type": "should-abstain",
+          "top_score": 15.775457664763023,
+          "chunks": 5
+        }
+      ]
+    },
+    "voice-optimal-RAG": {
+      "retrieval": "dense (nomic-embed-text-v1.5)",
+      "summary": {
+        "mean_recall": 0.7099567099567099,
+        "mean_critical_recall": 0.6363636363636364,
+        "questions_with_all_criticals": 6,
+        "questions_scored": 11,
+        "discrimination": 0.09703636363636359
+      },
+      "results": [
+        {
+          "id": "rental-below-zero",
+          "type": "strategy",
+          "found": [
+            "suspended / carryforward"
+          ],
+          "missing": [
+            "passive activity loss",
+            "$25,000 special allowance",
+            "MAGI phase-out",
+            "at-risk limits",
+            "real estate professional",
+            "Form 8582"
+          ],
+          "critical_missing": [
+            "passive activity loss",
+            "$25,000 special allowance",
+            "MAGI phase-out"
+          ],
+          "recall": 0.14285714285714285,
+          "critical_recall": 0.0,
+          "top_score": 0.6786,
+          "latency_ms": 40.24100303649902
+        },
+        {
+          "id": "suspended-on-sale",
+          "type": "strategy",
+          "found": [
+            "passive activity loss",
+            "disposition releases losses",
+            "suspended / carryforward"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 0.6605,
+          "latency_ms": 22.653818130493164
+        },
+        {
+          "id": "skip-depreciation",
+          "type": "strategy",
+          "found": [
+            "basis reduction"
+          ],
+          "missing": [
+            "allowed or allowable",
+            "depreciation recapture"
+          ],
+          "critical_missing": [
+            "allowed or allowable",
+            "depreciation recapture"
+          ],
+          "recall": 0.3333333333333333,
+          "critical_recall": 0.0,
+          "top_score": 0.7163,
+          "latency_ms": 20.494937896728516
+        },
+        {
+          "id": "offset-salary",
+          "type": "vocabulary-gap",
+          "found": [
+            "passive activity loss",
+            "nonpassive income",
+            "$25,000 special allowance"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 0.664,
+          "latency_ms": 20.097017288208008
+        },
+        {
+          "id": "time-spent-managing",
+          "type": "vocabulary-gap",
+          "found": [],
+          "missing": [
+            "material participation",
+            "real estate professional",
+            "750 hours"
+          ],
+          "critical_missing": [
+            "material participation",
+            "real estate professional"
+          ],
+          "recall": 0.0,
+          "critical_recall": 0.0,
+          "top_score": 0.6379,
+          "latency_ms": 19.8819637298584
+        },
+        {
+          "id": "converted-home",
+          "type": "multi-hop",
+          "found": [
+            "adjusted basis",
+            "lesser of"
+          ],
+          "missing": [
+            "fair market value at conversion"
+          ],
+          "critical_missing": [
+            "fair market value at conversion"
+          ],
+          "recall": 0.6666666666666666,
+          "critical_recall": 0.5,
+          "top_score": 0.7272,
+          "latency_ms": 22.13573455810547
+        },
+        {
+          "id": "depreciate-then-sell",
+          "type": "multi-hop",
+          "found": [
+            "adjusted basis",
+            "gain on disposition"
+          ],
+          "missing": [
+            "depreciation recapture"
+          ],
+          "critical_missing": [
+            "depreciation recapture"
+          ],
+          "recall": 0.6666666666666666,
+          "critical_recall": 0.5,
+          "top_score": 0.747,
+          "latency_ms": 20.08819580078125
+        },
+        {
+          "id": "max-allowance",
+          "type": "factual",
+          "found": [
+            "$25,000 special allowance",
+            "special allowance"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 0.6992,
+          "latency_ms": 19.430160522460938
+        },
+        {
+          "id": "phaseout-threshold",
+          "type": "factual",
+          "found": [
+            "$150,000",
+            "modified adjusted gross income"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 0.6989,
+          "latency_ms": 20.784854888916016
+        },
+        {
+          "id": "recovery-period",
+          "type": "factual",
+          "found": [
+            "27.5 years",
+            "residential rental"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 0.79,
+          "latency_ms": 20.957231521606445
+        },
+        {
+          "id": "vacation-home-days",
+          "type": "factual",
+          "found": [
+            "14 days",
+            "10% of days rented",
+            "personal use"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 0.7765,
+          "latency_ms": 20.387887954711914
+        },
+        {
+          "id": "out-of-corpus-c-corp",
+          "type": "should-abstain",
+          "top_score": 0.6114,
+          "chunks": 5
+        },
+        {
+          "id": "out-of-corpus-rd-credit",
+          "type": "should-abstain",
+          "top_score": 0.612,
+          "chunks": 5
+        }
+      ]
+    },
+    "full-context (control)": {
+      "retrieval": "none \u2014 entire corpus in the prompt",
+      "summary": {
+        "mean_recall": 1.0,
+        "mean_critical_recall": 1.0,
+        "questions_with_all_criticals": 11,
+        "questions_scored": 11,
+        "discrimination": 0.0
+      },
+      "results": [
+        {
+          "id": "rental-below-zero",
+          "type": "strategy",
+          "found": [
+            "passive activity loss",
+            "$25,000 special allowance",
+            "MAGI phase-out",
+            "suspended / carryforward",
+            "at-risk limits",
+            "real estate professional",
+            "Form 8582"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0
+        },
+        {
+          "id": "suspended-on-sale",
+          "type": "strategy",
+          "found": [
+            "passive activity loss",
+            "disposition releases losses",
+            "suspended / carryforward"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0
+        },
+        {
+          "id": "skip-depreciation",
+          "type": "strategy",
+          "found": [
+            "allowed or allowable",
+            "depreciation recapture",
+            "basis reduction"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0
+        },
+        {
+          "id": "offset-salary",
+          "type": "vocabulary-gap",
+          "found": [
+            "passive activity loss",
+            "nonpassive income",
+            "$25,000 special allowance"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0
+        },
+        {
+          "id": "time-spent-managing",
+          "type": "vocabulary-gap",
+          "found": [
+            "material participation",
+            "real estate professional",
+            "750 hours"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0
+        },
+        {
+          "id": "converted-home",
+          "type": "multi-hop",
+          "found": [
+            "fair market value at conversion",
+            "adjusted basis",
+            "lesser of"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0
+        },
+        {
+          "id": "depreciate-then-sell",
+          "type": "multi-hop",
+          "found": [
+            "depreciation recapture",
+            "adjusted basis",
+            "gain on disposition"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0
+        },
+        {
+          "id": "max-allowance",
+          "type": "factual",
+          "found": [
+            "$25,000 special allowance",
+            "special allowance"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0
+        },
+        {
+          "id": "phaseout-threshold",
+          "type": "factual",
+          "found": [
+            "$150,000",
+            "modified adjusted gross income"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0
+        },
+        {
+          "id": "recovery-period",
+          "type": "factual",
+          "found": [
+            "27.5 years",
+            "residential rental"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0
+        },
+        {
+          "id": "vacation-home-days",
+          "type": "factual",
+          "found": [
+            "14 days",
+            "10% of days rented",
+            "personal use"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0
+        },
+        {
+          "id": "out-of-corpus-c-corp",
+          "type": "should-abstain",
+          "top_score": 1.0,
+          "chunks": 1
+        },
+        {
+          "id": "out-of-corpus-rd-credit",
+          "type": "should-abstain",
+          "top_score": 1.0,
+          "chunks": 1
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,153 @@
+{
+  "corpus": ["p527", "p925", "p946", "p523", "i1040gi"],
+  "notes": [
+    "required_concepts are regex patterns, matched case-insensitively against the",
+    "concatenated text a retriever returns. They are the things you MUST have in",
+    "front of you to answer correctly — not the answer itself. Every one was",
+    "verified to exist in the corpus before being written here, so a miss is a",
+    "retrieval failure rather than a gap in the source material.",
+    "",
+    "`critical` concepts are the ones whose absence makes the answer actively",
+    "wrong rather than merely thin. A system that omits a critical concept and",
+    "answers anyway is worse than one that abstains."
+  ],
+  "questions": [
+    {
+      "id": "rental-below-zero",
+      "type": "strategy",
+      "question": "I had more expenses than rent on my rental house this year. Should I deduct the loss down below zero? What are the pros and cons?",
+      "why_hard": "The question names none of the rules that govern it. A retriever matching the caller's vocabulary returns generic rental-expense passages and silently omits the passive activity limitation, which is the entire answer.",
+      "required_concepts": [
+        {"name": "passive activity loss", "pattern": "passive activit", "critical": true},
+        {"name": "$25,000 special allowance", "pattern": "\\$25,000|25,000", "critical": true},
+        {"name": "MAGI phase-out", "pattern": "150,000|100,000|phase", "critical": true},
+        {"name": "suspended / carryforward", "pattern": "suspend|carr(y|ied) forward|carryover", "critical": false},
+        {"name": "at-risk limits", "pattern": "at-risk|at risk", "critical": false},
+        {"name": "real estate professional", "pattern": "real estate professional", "critical": false},
+        {"name": "Form 8582", "pattern": "8582", "critical": false}
+      ]
+    },
+    {
+      "id": "suspended-on-sale",
+      "type": "strategy",
+      "question": "My rental has lost money three years running and I've never been able to use the losses. What happens to them if I sell the place?",
+      "why_hard": "Requires connecting the suspension rule to the disposition rule — two different places in the text.",
+      "required_concepts": [
+        {"name": "passive activity loss", "pattern": "passive activit", "critical": true},
+        {"name": "disposition releases losses", "pattern": "dispos|entire interest", "critical": true},
+        {"name": "suspended / carryforward", "pattern": "suspend|carr(y|ied) forward|carryover", "critical": true}
+      ]
+    },
+    {
+      "id": "skip-depreciation",
+      "type": "strategy",
+      "question": "I don't need the deduction this year. Can I just skip taking depreciation on my rental and save it for later?",
+      "why_hard": "A trap. The intuitive answer is yes; the correct answer is that recapture is computed on depreciation allowed OR allowable, so skipping it costs you twice. Requires material the question does not gesture at.",
+      "required_concepts": [
+        {"name": "allowed or allowable", "pattern": "allowed or allowable|allowable", "critical": true},
+        {"name": "depreciation recapture", "pattern": "recaptur", "critical": true},
+        {"name": "basis reduction", "pattern": "reduce|adjusted basis", "critical": false}
+      ]
+    },
+    {
+      "id": "offset-salary",
+      "type": "vocabulary-gap",
+      "question": "Can I use my rental losses to lower the tax on my day job salary?",
+      "why_hard": "\"Day job salary\" is nonpassive income and \"rental losses\" are passive; the corpus never uses the caller's words.",
+      "required_concepts": [
+        {"name": "passive activity loss", "pattern": "passive activit", "critical": true},
+        {"name": "nonpassive income", "pattern": "nonpassive|non-passive|active income", "critical": true},
+        {"name": "$25,000 special allowance", "pattern": "\\$25,000|25,000", "critical": true}
+      ]
+    },
+    {
+      "id": "time-spent-managing",
+      "type": "vocabulary-gap",
+      "question": "I spend a huge amount of time managing my properties myself. Does that change how my losses are treated?",
+      "why_hard": "The concepts are material participation and real estate professional status, neither of which the caller names.",
+      "required_concepts": [
+        {"name": "material participation", "pattern": "material(ly)? participat", "critical": true},
+        {"name": "real estate professional", "pattern": "real estate professional", "critical": true},
+        {"name": "750 hours", "pattern": "750", "critical": false}
+      ]
+    },
+    {
+      "id": "converted-home",
+      "type": "multi-hop",
+      "question": "I moved out of my house and started renting it. What do I use as the value for depreciation?",
+      "why_hard": "Basis on conversion is the lesser of adjusted basis or fair market value at conversion — a rule that lives apart from the general depreciation material.",
+      "required_concepts": [
+        {"name": "fair market value at conversion", "pattern": "fair market value", "critical": true},
+        {"name": "adjusted basis", "pattern": "adjusted basis", "critical": true},
+        {"name": "lesser of", "pattern": "lesser of|smaller of", "critical": false}
+      ]
+    },
+    {
+      "id": "depreciate-then-sell",
+      "type": "multi-hop",
+      "question": "If I take depreciation on the rental every year, what happens tax-wise when I eventually sell it?",
+      "why_hard": "Spans two publications: depreciation lives in p946/p527, recapture on sale in p946/p925. Tests cross-document retrieval.",
+      "required_concepts": [
+        {"name": "depreciation recapture", "pattern": "recaptur", "critical": true},
+        {"name": "adjusted basis", "pattern": "adjusted basis", "critical": true},
+        {"name": "gain on disposition", "pattern": "gain", "critical": false}
+      ]
+    },
+    {
+      "id": "max-allowance",
+      "type": "factual",
+      "question": "What is the maximum special allowance for rental real estate losses?",
+      "expected_answer": "$25,000",
+      "why_hard": "Not hard. This is the control — a well-posed factual lookup that every engine should get. If one misses this, it is broken rather than merely weak.",
+      "required_concepts": [
+        {"name": "$25,000 special allowance", "pattern": "\\$25,000|25,000", "critical": true},
+        {"name": "special allowance", "pattern": "special allowance", "critical": true}
+      ]
+    },
+    {
+      "id": "phaseout-threshold",
+      "type": "factual",
+      "question": "At what income level does the rental real estate loss allowance disappear completely?",
+      "expected_answer": "$150,000 modified adjusted gross income",
+      "required_concepts": [
+        {"name": "$150,000", "pattern": "150,000", "critical": true},
+        {"name": "modified adjusted gross income", "pattern": "modified adjusted gross income|MAGI", "critical": false}
+      ]
+    },
+    {
+      "id": "recovery-period",
+      "type": "factual",
+      "question": "Over how many years do I depreciate residential rental property?",
+      "expected_answer": "27.5 years",
+      "required_concepts": [
+        {"name": "27.5 years", "pattern": "27\\.5", "critical": true},
+        {"name": "residential rental", "pattern": "residential rental", "critical": false}
+      ]
+    },
+    {
+      "id": "vacation-home-days",
+      "type": "factual",
+      "question": "How many days can I personally use my rental before it counts as a residence?",
+      "expected_answer": "the greater of 14 days or 10% of days rented at fair rental value",
+      "required_concepts": [
+        {"name": "14 days", "pattern": "14 days", "critical": true},
+        {"name": "10% of days rented", "pattern": "10%", "critical": true},
+        {"name": "personal use", "pattern": "personal use", "critical": false}
+      ]
+    },
+    {
+      "id": "out-of-corpus-c-corp",
+      "type": "should-abstain",
+      "question": "What is the federal corporate income tax rate for a C corporation?",
+      "why_hard": "Not answerable from these publications. A good system says so. A bad one retrieves something tax-shaped and answers with confidence.",
+      "required_concepts": []
+    },
+    {
+      "id": "out-of-corpus-rd-credit",
+      "type": "should-abstain",
+      "question": "How do I claim the research and development tax credit for my software company?",
+      "why_hard": "Not in this corpus. Tests whether the engine's confidence tracks its evidence.",
+      "required_concepts": []
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+results/lancedb/
+results/uploads/
+results/platform.db*
+corpus/*.pdf
+corpus/*.txt
