@@ -73,14 +73,29 @@ and they sound more exotic than they are:
 a retriever, not a retriever itself.
 
 
-| strategy | recall | critical | answerable | passages | latency |
+| approach | recall | critical | answerable | passages | latency |
 |---|---|---|---|---|---|
-| keyword search (BM25/FTS5) | 54% | 47% | 4 / 11 | 5 | ~0s |
-| semantic search (nomic-embed-v1.5) | 71% | 64% | 6 / 11 | 5 | ~0s |
-| semantic search, returning 17 instead of 5 | 85% | 86% | 9 / 11 | 17 | ~0s |
-| **HyDE → semantic search** | **93%** | **95%** | **10 / 11** | **5** | 4s |
-| **iterative loop (3 rounds) → semantic search** | **100%** | **100%** | **11 / 11** | 17 | 6s |
-| full context (p527+p925, ~80k tok) | 100% | 100% | 11 / 11 | — | ~0s |
+| keyword search (BM25) | 61% | 60% | 14 / 28 | 5 | ~0s |
+| semantic search (nomic-embed-v1.5) | 63% | 66% | 16 / 28 | 5 | ~0s |
+| **HyDE → semantic** | **82%** | **80%** | **20 / 28** | **5** | 3.9s |
+| **iterative loop (3 rounds) → semantic** | **95%** | **96%** | **27 / 28** | 19 | 6.8s |
+| full context, curated 2 pubs (~80k tok) | 95% | 93% | 24 / 28 | — | ~0s |
+| full context, all 5 pubs (~393k tok) | 100% | 100% | 28 / 28 | — | ~0s |
+
+### By question type — this is where the ranking actually lives
+
+| | keyword | semantic | HyDE | loop | full (all) |
+|---|---|---|---|---|---|
+| factual lookup | 4/5 | 5/5 | 5/5 | 5/5 | 5/5 |
+| strategy | 2/3 | 2/3 | 2/3 | 3/3 | 3/3 |
+| **vocabulary-gap** | **4/9** | **4/9** | 7/9 | **9/9** | 9/9 |
+| **misleading** | 2/5 | 3/5 | 3/5 | 4/5 | 5/5 |
+| **multi-hop** | 2/6 | 2/6 | 3/6 | **6/6** | 6/6 |
+
+**Semantic search is no better than keyword search on the vocabulary gap —
+4/9 each.** That is the sharpest confirmation available that the problem is not
+retrieval quality. Both indexes held the answer; neither was asked for it in
+terms it could match.
 
 ### Plain retrieval is not enough, and more of it does not fix it
 
@@ -90,52 +105,62 @@ reaches 7/11 — but that is a ceiling assuming perfect fusion. Four questions
 `depreciate-then-sell`) are reached by neither. They are exactly the strategy,
 vocabulary-gap and multi-hop cases. Every factual lookup passed everywhere.
 
-### Query-side strategies close the gap, and they are cheap
+### Query-side strategies close the gap, and one of them is cheap
 
 Both wrappers attack the same root cause: the caller's words are not the
-corpus's words, so a query built from the question cannot find the governing
-rule. Watch the loop bridge it on the rental question — round 1 searches the
-caller's phrasing, then:
+corpus's words. Watch the loop bridge it on a deliberately misleading question —
+*"I fixed the roof on my rental. Can I deduct the whole cost right now?"* —
+where "fixed"/"repair" points at the wrong rule and the real answer is
+capitalisation:
 
 ```
-round 2: passive activity loss limitation rental real estate
-         at-risk rules rental property losses
-         rental loss deduction $25000 special allowance
-round 3: passive activity loss limitation deduction ordering rules
-         rental real estate active participation requirements definition
+round 2: repair vs improvement safe harbor election
+         de minimis safe harbor rental property
+         routine maintenance safe harbor rental property
+round 3: rental property roof repair versus improvement betterment restoration
+         rental property repair regulations section 1.162-4 capitalization
 ```
 
-None of those terms appear in the question. HyDE reaches the same vocabulary in
-one shot by writing the passage it expects to exist, then searching with that.
+None of those terms are in the question. **HyDE is the efficiency result** —
+20/28 on the same five passages as plain semantic, one extra model call.
+**The loop is the completeness result** — 27/28.
 
-**HyDE is the efficiency result**: 10/11 on the *same five passages* as plain
-semantic search, for one extra model call. It beats a single semantic search
-returning 17 passages (9/11)
-while putting a third as much in the context window.
+### It narrates, because six seconds of silence is not acceptable
 
-**The loop is the completeness result**: 11/11, matching full context on 17
-passages instead of 80k tokens.
+The same model call that picks the next queries is also asked for one short
+spoken sentence. Free, no extra round trip:
 
-### The fairness check that matters
+```
+[ 2.8s] "Checking if there are special rules that let you deduct certain
+         improvements immediately instead of depreciating."
+[ 8.0s] "Checking the specific rules that distinguish a deductible repair
+         from a capital improvement for roofs."
+```
 
-A loop sees more passages than a single shot, so beating single-shot k=5 proves
-nothing on its own. At the loop's own budget, a single semantic search scores
-9/11 —
-so of the naive 6→11 improvement, +3 is simply seeing more and +2 is the loop
-itself. The loop's advantage is real but smaller than the headline suggests,
-which is why `passages_seen` is recorded for every strategy.
+Pass `on_progress=` to `IterativeLoop`. In a voice agent that callback feeds the
+stream the speech path already consumes.
 
-## The conclusion
+### The fairness checks
 
-For a bounded corpus, curated long context is unbeatable on quality and
-trivial to build — 80k tokens answers everything here. But it does not scale
-past the window, and it requires knowing which documents to load.
+A loop sees more passages than a single shot, so `passages_seen` is recorded for
+every strategy — the loop's 27/28 costs 19 passages against semantic's 5.
 
-**The finding worth acting on is that the gap is query-side, not index-side.**
-The engine you already run is not the problem; asking it one question built
-from the caller's vocabulary is. HyDE is one model call in front of an existing
-retriever and recovers most of the loss. The loop recovers the rest when the
-question genuinely spans several rules.
+And the no-retrieval control is run twice, because the difference is a result.
+Curated to the two publications a human judged relevant, it scores 24/28 — and
+the four it misses are precisely the questions whose answers live in the
+publications that curation excluded. **Curation is a guess about what will be
+asked.** Given all five publications it scores 28/28, at 393k tokens per
+question against the loop's ~19 passages: roughly 78× the context for one more
+question.
+
+### The question nothing retrieved
+
+`deduct-my-own-time` — *"Can I deduct the value of my time managing my
+rentals?"* — was answered only by full context. The answer is that no such
+deduction exists, and **you cannot retrieve a negative.** No passage says "there
+is no deduction for your own labour"; the absence is the answer. Any system
+built on retrieval alone will fail this class of question, and it will fail it
+confidently.
 
 ## Excluded, and why
 
@@ -154,3 +179,19 @@ A class with `health`, `ingest` and `retrieve`. See `adapters/base.py` for the
 contract and `adapters/engines.py` for three worked examples. Strategies like
 HyDE and the loop wrap an engine rather than replacing it — see
 `adapters/strategies.py`.
+
+## The API key
+
+HyDE and the loop need one model call per round. Provide a key by any of:
+
+```bash
+export ANTHROPIC_API_KEY=sk-ant-...
+# or
+export BAKEOFF_ENV_FILE=/path/to/some/.env     # a file containing ANTHROPIC_API_KEY=
+# or drop a .env beside this README
+```
+
+Without one, those two strategies report an error rather than quietly
+degrading to a single search — a loop that cannot make its decision call is
+not a loop, and reporting single-shot numbers under a loop's name once made a
+broken run look like a finding.

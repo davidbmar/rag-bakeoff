@@ -80,9 +80,12 @@ def main() -> int:
         # replacing an index you already have.
         HyDE(dense),
         IterativeLoop(dense, rounds=3, per_round=3),
-        # The realistic form of the no-retrieval option: the two publications
-        # that actually govern these questions, ~80k tokens.
-        FullContext(subset=["p527", "p925"]),
+        # Two forms of the no-retrieval option, kept separate because the
+        # difference between them is itself a result: curating down to the
+        # publications you think matter is a *guess*, and the questions it
+        # cannot answer are the ones your guess excluded.
+        FullContext(subset=["p527", "p925"], label="curated 2 pubs, ~80k tok"),
+        FullContext(label="all 5 pubs, ~393k tok"),
     ]
     if args.only:
         engines = [e for e in engines if args.only.lower() in e.name.lower()]

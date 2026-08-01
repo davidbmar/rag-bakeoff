@@ -121,14 +121,31 @@ class IterativeLoop:
     also the signal a system would use to abstain.
 
     This is the pattern the multi-hop retrieval literature supports.
+
+    NARRATION. Six seconds of silence is unacceptable on a voice call, so the
+    same model call that decides the next queries is also asked for one short
+    sentence describing what it is about to look for. Free — no extra round
+    trip — and it is the difference between dead air and visible work.
+
+    Pass `on_progress` to receive those sentences as they happen. In a voice
+    agent that callback writes to the SSE stream the speech path already
+    consumes; here it prints.
     """
 
-    def __init__(self, engine, rounds: int = 3, per_round: int = 3):
+    def __init__(self, engine, rounds: int = 3, per_round: int = 3, on_progress=None):
         self.engine = engine
         self.rounds = rounds
         self.per_round = per_round
+        self.on_progress = on_progress
         self.name = f"loop×{rounds} → {engine.name}"
         self.retrieval = f"iterative ({rounds} rounds) over {engine.retrieval}"
+
+    def _say(self, text: str) -> None:
+        if self.on_progress and text:
+            try:
+                self.on_progress(text)
+            except Exception:  # noqa: BLE001 - narration must never break retrieval
+                pass
 
     def health(self) -> str | None:
         return self.engine.health()
@@ -170,16 +187,35 @@ class IterativeLoop:
                     "passages retrieved so far.\n\n"
                     "Name any concept, rule or limitation that is REQUIRED to "
                     "answer correctly and is NOT yet present. Reply with a "
-                    "JSON object: {\"sufficient\": bool, \"queries\": [up to "
-                    f"{self.per_round} short search strings using the "
-                    "terminology an IRS publication would use]}. Reply with "
-                    "JSON and nothing else.\n\n"
+                    "JSON object:\n"
+                    '{"sufficient": bool,\n'
+                    f' "queries": [up to {self.per_round} short search strings '
+                    "using the terminology an IRS publication would use],\n"
+                    ' "narration": "one short sentence, spoken aloud to the '
+                    "person waiting, saying what you are checking next and "
+                    "why — plain language, no jargon, no more than 15 words, "
+                    'present tense"}\n'
+                    "Reply with JSON and nothing else.\n\n"
                     f"QUESTION: {question}\n\nRETRIEVED SO FAR:\n{context}"
                 )
                 block = re.search(r"\{.*\}", reply, re.S)
                 decision = json.loads(block.group(0)) if block else {}
-            except Exception:  # noqa: BLE001 - a bad round ends the loop, not the run
+            except Exception as exc:  # noqa: BLE001
+                # A loop that cannot make its decision call is not a loop. On
+                # the FIRST round, silently returning round-one results would
+                # report single-shot numbers under a loop's name — which is how
+                # a broken run once scored identically to plain search and
+                # looked like a finding rather than a bug. Fail loudly instead.
+                # A later round failing is different: real work is already
+                # banked, so keep it and stop.
+                if round_index == 0:
+                    return Retrieved(
+                        error=f"loop could not run: {type(exc).__name__}: {exc}"
+                    )
+                trace.append({"round": round_index + 1, "stopped": f"error: {exc}"})
                 break
+
+            self._say(decision.get("narration", ""))
 
             if decision.get("sufficient") is True:
                 trace.append({"round": round_index + 1, "stopped": "model reported sufficient"})

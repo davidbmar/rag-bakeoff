@@ -186,13 +186,18 @@ class FullContext:
     """
 
     name = "full-context (control)"
+    label = ""
     retrieval = "none — entire corpus in the prompt"
 
-    def __init__(self, subset: list[str] | None = None):
-        # A curated per-topic subset is the realistic form of this option:
-        # p527 + p925 is ~80k tokens and answers every rental question here.
+    def __init__(self, subset: list[str] | None = None, label: str = ""):
+        # A curated subset is the realistic form of this option — but curation
+        # is a guess about what will be asked, and the questions it misses are
+        # exactly the ones the guess excluded. Both forms are run.
         self.subset = subset
         self._text = ""
+        if label:
+            self.name = f"full-context ({label})"
+            self.retrieval = f"none — {label} in the prompt"
 
     def health(self) -> str | None:
         return None

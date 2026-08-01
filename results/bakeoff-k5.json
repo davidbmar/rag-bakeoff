@@ -1,18 +1,95 @@
 {
   "k": 5,
   "engines": {
-    "full-context (control)": {
-      "retrieval": "none \u2014 entire corpus in the prompt",
+    "full-context (curated 2 pubs, ~80k tok)": {
+      "retrieval": "none \u2014 curated 2 pubs, ~80k tok in the prompt",
       "summary": {
-        "mean_recall": 1.0,
-        "mean_critical_recall": 1.0,
-        "questions_with_all_criticals": 11,
-        "questions_scored": 11,
+        "mean_recall": 0.9523809523809523,
+        "mean_critical_recall": 0.9285714285714286,
+        "questions_with_all_criticals": 24,
+        "questions_scored": 28,
         "mean_passages_seen": 1,
         "mean_latency_ms": 0.0,
         "discrimination": 0.0
       },
       "results": [
+        {
+          "id": "max-allowance",
+          "type": "factual",
+          "found": [
+            "$25,000",
+            "special allowance"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "phaseout-threshold",
+          "type": "factual",
+          "found": [
+            "$150,000",
+            "modified adjusted gross income"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "recovery-period",
+          "type": "factual",
+          "found": [
+            "27.5 years",
+            "residential rental"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "vacation-home-days",
+          "type": "factual",
+          "found": [
+            "14 days",
+            "10% of days rented",
+            "personal use"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "home-sale-exclusion",
+          "type": "factual",
+          "found": [
+            "$500,000",
+            "$250,000",
+            "exclusion"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
         {
           "id": "rental-below-zero",
           "type": "strategy",
@@ -22,8 +99,7 @@
             "MAGI phase-out",
             "suspended / carryforward",
             "at-risk limits",
-            "real estate professional",
-            "Form 8582"
+            "real estate professional"
           ],
           "missing": [],
           "critical_missing": [],
@@ -98,12 +174,194 @@
           "passages_seen": 1
         },
         {
-          "id": "converted-home",
-          "type": "multi-hop",
+          "id": "mortgage-no-profit",
+          "type": "vocabulary-gap",
           "found": [
-            "fair market value at conversion",
-            "adjusted basis",
-            "lesser of"
+            "mortgage interest deductible",
+            "principal is not deductible",
+            "passive activity loss"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "brother-cheap-rent",
+          "type": "vocabulary-gap",
+          "found": [
+            "fair rental",
+            "personal use",
+            "family member"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "split-house-and-land",
+          "type": "vocabulary-gap",
+          "found": [
+            "land is not depreciable",
+            "allocate basis",
+            "fair market value"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "inherited-rental",
+          "type": "vocabulary-gap",
+          "found": [
+            "fair market value at death",
+            "inherited property basis",
+            "basis"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "rented-before-selling",
+          "type": "vocabulary-gap",
+          "found": [
+            "exclusion is reduced",
+            "period of ownership"
+          ],
+          "missing": [
+            "nonqualified use"
+          ],
+          "critical_missing": [
+            "nonqualified use"
+          ],
+          "recall": 0.6666666666666666,
+          "critical_recall": 0.5,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "moved-for-work",
+          "type": "vocabulary-gap",
+          "found": [
+            "partial exclusion",
+            "two of five years"
+          ],
+          "missing": [
+            "work-related move"
+          ],
+          "critical_missing": [
+            "work-related move"
+          ],
+          "recall": 0.6666666666666666,
+          "critical_recall": 0.5,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "never-used-losses-expire",
+          "type": "vocabulary-gap",
+          "found": [
+            "carryforward",
+            "passive activity"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "fixed-the-roof",
+          "type": "misleading",
+          "found": [
+            "improvement vs repair",
+            "capitalize / depreciate instead",
+            "betterment, restoration, adaptation"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "tenant-skipped-rent",
+          "type": "misleading",
+          "found": [
+            "cash basis \u2014 not included in income",
+            "uncollected rent"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "missed-depreciation-years",
+          "type": "misleading",
+          "found": [
+            "change in accounting method",
+            "allowed or allowable"
+          ],
+          "missing": [
+            "Form 3115"
+          ],
+          "critical_missing": [
+            "Form 3115"
+          ],
+          "recall": 0.6666666666666666,
+          "critical_recall": 0.5,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "deduct-my-own-time",
+          "type": "misleading",
+          "found": [
+            "own labor not deductible",
+            "deductible rental expenses"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "fridge-for-the-rental",
+          "type": "misleading",
+          "found": [
+            "5-year property",
+            "appliances / furniture class",
+            "section 179 or bonus"
           ],
           "missing": [],
           "critical_missing": [],
@@ -130,10 +388,137 @@
           "passages_seen": 1
         },
         {
+          "id": "converted-home",
+          "type": "multi-hop",
+          "found": [
+            "fair market value at conversion",
+            "adjusted basis",
+            "lesser of"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "moved-back-in",
+          "type": "multi-hop",
+          "found": [
+            "recapture on later sale",
+            "personal use conversion",
+            "nonqualified use"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "swap-one-rental-for-another",
+          "type": "multi-hop",
+          "found": [
+            "section 1031",
+            "deferred gain / basis carryover"
+          ],
+          "missing": [
+            "like-kind exchange"
+          ],
+          "critical_missing": [
+            "like-kind exchange"
+          ],
+          "recall": 0.6666666666666666,
+          "critical_recall": 0.5,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "new-deck-when-selling",
+          "type": "multi-hop",
+          "found": [
+            "adjusted basis",
+            "improvements add to basis",
+            "reduces gain"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "big-hvac-all-at-once",
+          "type": "multi-hop",
+          "found": [
+            "section 179",
+            "special depreciation allowance",
+            "improvement property"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "out-of-corpus-c-corp",
+          "type": "should-abstain",
+          "top_score": 1.0,
+          "chunks": 1
+        },
+        {
+          "id": "out-of-corpus-rd-credit",
+          "type": "should-abstain",
+          "top_score": 1.0,
+          "chunks": 1
+        },
+        {
+          "id": "out-of-corpus-s-corp",
+          "type": "should-abstain",
+          "top_score": 1.0,
+          "chunks": 1
+        },
+        {
+          "id": "out-of-corpus-vehicle",
+          "type": "should-abstain",
+          "top_score": 1.0,
+          "chunks": 1
+        },
+        {
+          "id": "out-of-corpus-estate-tax",
+          "type": "should-abstain",
+          "top_score": 1.0,
+          "chunks": 1
+        }
+      ]
+    },
+    "full-context (all 5 pubs, ~393k tok)": {
+      "retrieval": "none \u2014 all 5 pubs, ~393k tok in the prompt",
+      "summary": {
+        "mean_recall": 1.0,
+        "mean_critical_recall": 1.0,
+        "questions_with_all_criticals": 28,
+        "questions_scored": 28,
+        "mean_passages_seen": 1,
+        "mean_latency_ms": 0.0,
+        "discrimination": 0.0
+      },
+      "results": [
+        {
           "id": "max-allowance",
           "type": "factual",
           "found": [
-            "$25,000 special allowance",
+            "$25,000",
             "special allowance"
           ],
           "missing": [],
@@ -191,6 +576,390 @@
           "passages_seen": 1
         },
         {
+          "id": "home-sale-exclusion",
+          "type": "factual",
+          "found": [
+            "$500,000",
+            "$250,000",
+            "exclusion"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "rental-below-zero",
+          "type": "strategy",
+          "found": [
+            "passive activity loss",
+            "$25,000 special allowance",
+            "MAGI phase-out",
+            "suspended / carryforward",
+            "at-risk limits",
+            "real estate professional"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "suspended-on-sale",
+          "type": "strategy",
+          "found": [
+            "passive activity loss",
+            "disposition releases losses",
+            "suspended / carryforward"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "skip-depreciation",
+          "type": "strategy",
+          "found": [
+            "allowed or allowable",
+            "depreciation recapture",
+            "basis reduction"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "offset-salary",
+          "type": "vocabulary-gap",
+          "found": [
+            "passive activity loss",
+            "nonpassive income",
+            "$25,000 special allowance"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "time-spent-managing",
+          "type": "vocabulary-gap",
+          "found": [
+            "material participation",
+            "real estate professional",
+            "750 hours"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "mortgage-no-profit",
+          "type": "vocabulary-gap",
+          "found": [
+            "mortgage interest deductible",
+            "principal is not deductible",
+            "passive activity loss"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "brother-cheap-rent",
+          "type": "vocabulary-gap",
+          "found": [
+            "fair rental",
+            "personal use",
+            "family member"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "split-house-and-land",
+          "type": "vocabulary-gap",
+          "found": [
+            "land is not depreciable",
+            "allocate basis",
+            "fair market value"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "inherited-rental",
+          "type": "vocabulary-gap",
+          "found": [
+            "fair market value at death",
+            "inherited property basis",
+            "basis"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "rented-before-selling",
+          "type": "vocabulary-gap",
+          "found": [
+            "nonqualified use",
+            "exclusion is reduced",
+            "period of ownership"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "moved-for-work",
+          "type": "vocabulary-gap",
+          "found": [
+            "partial exclusion",
+            "work-related move",
+            "two of five years"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "never-used-losses-expire",
+          "type": "vocabulary-gap",
+          "found": [
+            "carryforward",
+            "passive activity"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "fixed-the-roof",
+          "type": "misleading",
+          "found": [
+            "improvement vs repair",
+            "capitalize / depreciate instead",
+            "betterment, restoration, adaptation"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "tenant-skipped-rent",
+          "type": "misleading",
+          "found": [
+            "cash basis \u2014 not included in income",
+            "uncollected rent"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "missed-depreciation-years",
+          "type": "misleading",
+          "found": [
+            "Form 3115",
+            "change in accounting method",
+            "allowed or allowable"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "deduct-my-own-time",
+          "type": "misleading",
+          "found": [
+            "own labor not deductible",
+            "deductible rental expenses"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "fridge-for-the-rental",
+          "type": "misleading",
+          "found": [
+            "5-year property",
+            "appliances / furniture class",
+            "section 179 or bonus"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "depreciate-then-sell",
+          "type": "multi-hop",
+          "found": [
+            "depreciation recapture",
+            "adjusted basis",
+            "gain on disposition"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "converted-home",
+          "type": "multi-hop",
+          "found": [
+            "fair market value at conversion",
+            "adjusted basis",
+            "lesser of"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "moved-back-in",
+          "type": "multi-hop",
+          "found": [
+            "recapture on later sale",
+            "personal use conversion",
+            "nonqualified use"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "swap-one-rental-for-another",
+          "type": "multi-hop",
+          "found": [
+            "like-kind exchange",
+            "section 1031",
+            "deferred gain / basis carryover"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "new-deck-when-selling",
+          "type": "multi-hop",
+          "found": [
+            "adjusted basis",
+            "improvements add to basis",
+            "reduces gain"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
+          "id": "big-hvac-all-at-once",
+          "type": "multi-hop",
+          "found": [
+            "section 179",
+            "special depreciation allowance",
+            "improvement property"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 1.0,
+          "latency_ms": 0.0,
+          "passages_seen": 1
+        },
+        {
           "id": "out-of-corpus-c-corp",
           "type": "should-abstain",
           "top_score": 1.0,
@@ -198,6 +967,24 @@
         },
         {
           "id": "out-of-corpus-rd-credit",
+          "type": "should-abstain",
+          "top_score": 1.0,
+          "chunks": 1
+        },
+        {
+          "id": "out-of-corpus-s-corp",
+          "type": "should-abstain",
+          "top_score": 1.0,
+          "chunks": 1
+        },
+        {
+          "id": "out-of-corpus-vehicle",
+          "type": "should-abstain",
+          "top_score": 1.0,
+          "chunks": 1
+        },
+        {
+          "id": "out-of-corpus-estate-tax",
           "type": "should-abstain",
           "top_score": 1.0,
           "chunks": 1

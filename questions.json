@@ -1,106 +1,36 @@
 {
   "corpus": ["p527", "p925", "p946", "p523", "i1040gi"],
   "notes": [
-    "required_concepts are regex patterns, matched case-insensitively against the",
-    "concatenated text a retriever returns. They are the things you MUST have in",
-    "front of you to answer correctly — not the answer itself. Every one was",
-    "verified to exist in the corpus before being written here, so a miss is a",
-    "retrieval failure rather than a gap in the source material.",
+    "required_concepts are regex patterns matched case-insensitively against the",
+    "text a retriever returns. They are what you MUST have in front of you to",
+    "answer correctly — not the answer itself. Every one is verified to exist in",
+    "the corpus before use (validate_questions.py), so a miss is always a",
+    "retrieval failure and never a gap in the source material.",
     "",
-    "`critical` concepts are the ones whose absence makes the answer actively",
-    "wrong rather than merely thin. A system that omits a critical concept and",
-    "answers anyway is worse than one that abstains."
+    "`critical` marks concepts whose absence makes the answer actively wrong",
+    "rather than merely thin. A system that omits one and answers anyway is",
+    "worse than one that abstains.",
+    "",
+    "TYPES:",
+    "  factual        — well-posed lookup; the control. Everything should pass.",
+    "  vocabulary-gap — the asker's words do not appear in the governing text.",
+    "  misleading     — the obvious keyword match points at the WRONG section.",
+    "                   The sharpest test: failure here is a confident wrong",
+    "                   answer, not a thin one.",
+    "  multi-hop      — the answer spans two or more publications.",
+    "  strategy       — a decision question needing several rules at once.",
+    "  should-abstain — not answerable from this corpus. Measures whether the",
+    "                   system declines or retrieves something merely tax-shaped."
   ],
   "questions": [
-    {
-      "id": "rental-below-zero",
-      "type": "strategy",
-      "question": "I had more expenses than rent on my rental house this year. Should I deduct the loss down below zero? What are the pros and cons?",
-      "why_hard": "The question names none of the rules that govern it. A retriever matching the caller's vocabulary returns generic rental-expense passages and silently omits the passive activity limitation, which is the entire answer.",
-      "required_concepts": [
-        {"name": "passive activity loss", "pattern": "passive activit", "critical": true},
-        {"name": "$25,000 special allowance", "pattern": "\\$25,000|25,000", "critical": true},
-        {"name": "MAGI phase-out", "pattern": "150,000|100,000|phase", "critical": true},
-        {"name": "suspended / carryforward", "pattern": "suspend|carr(y|ied) forward|carryover", "critical": false},
-        {"name": "at-risk limits", "pattern": "at-risk|at risk", "critical": false},
-        {"name": "real estate professional", "pattern": "real estate professional", "critical": false},
-        {"name": "Form 8582", "pattern": "8582", "critical": false}
-      ]
-    },
-    {
-      "id": "suspended-on-sale",
-      "type": "strategy",
-      "question": "My rental has lost money three years running and I've never been able to use the losses. What happens to them if I sell the place?",
-      "why_hard": "Requires connecting the suspension rule to the disposition rule — two different places in the text.",
-      "required_concepts": [
-        {"name": "passive activity loss", "pattern": "passive activit", "critical": true},
-        {"name": "disposition releases losses", "pattern": "dispos|entire interest", "critical": true},
-        {"name": "suspended / carryforward", "pattern": "suspend|carr(y|ied) forward|carryover", "critical": true}
-      ]
-    },
-    {
-      "id": "skip-depreciation",
-      "type": "strategy",
-      "question": "I don't need the deduction this year. Can I just skip taking depreciation on my rental and save it for later?",
-      "why_hard": "A trap. The intuitive answer is yes; the correct answer is that recapture is computed on depreciation allowed OR allowable, so skipping it costs you twice. Requires material the question does not gesture at.",
-      "required_concepts": [
-        {"name": "allowed or allowable", "pattern": "allowed or allowable|allowable", "critical": true},
-        {"name": "depreciation recapture", "pattern": "recaptur", "critical": true},
-        {"name": "basis reduction", "pattern": "reduce|adjusted basis", "critical": false}
-      ]
-    },
-    {
-      "id": "offset-salary",
-      "type": "vocabulary-gap",
-      "question": "Can I use my rental losses to lower the tax on my day job salary?",
-      "why_hard": "\"Day job salary\" is nonpassive income and \"rental losses\" are passive; the corpus never uses the caller's words.",
-      "required_concepts": [
-        {"name": "passive activity loss", "pattern": "passive activit", "critical": true},
-        {"name": "nonpassive income", "pattern": "nonpassive|non-passive|active income", "critical": true},
-        {"name": "$25,000 special allowance", "pattern": "\\$25,000|25,000", "critical": true}
-      ]
-    },
-    {
-      "id": "time-spent-managing",
-      "type": "vocabulary-gap",
-      "question": "I spend a huge amount of time managing my properties myself. Does that change how my losses are treated?",
-      "why_hard": "The concepts are material participation and real estate professional status, neither of which the caller names.",
-      "required_concepts": [
-        {"name": "material participation", "pattern": "material(ly)? participat", "critical": true},
-        {"name": "real estate professional", "pattern": "real estate professional", "critical": true},
-        {"name": "750 hours", "pattern": "750", "critical": false}
-      ]
-    },
-    {
-      "id": "converted-home",
-      "type": "multi-hop",
-      "question": "I moved out of my house and started renting it. What do I use as the value for depreciation?",
-      "why_hard": "Basis on conversion is the lesser of adjusted basis or fair market value at conversion — a rule that lives apart from the general depreciation material.",
-      "required_concepts": [
-        {"name": "fair market value at conversion", "pattern": "fair market value", "critical": true},
-        {"name": "adjusted basis", "pattern": "adjusted basis", "critical": true},
-        {"name": "lesser of", "pattern": "lesser of|smaller of", "critical": false}
-      ]
-    },
-    {
-      "id": "depreciate-then-sell",
-      "type": "multi-hop",
-      "question": "If I take depreciation on the rental every year, what happens tax-wise when I eventually sell it?",
-      "why_hard": "Spans two publications: depreciation lives in p946/p527, recapture on sale in p946/p925. Tests cross-document retrieval.",
-      "required_concepts": [
-        {"name": "depreciation recapture", "pattern": "recaptur", "critical": true},
-        {"name": "adjusted basis", "pattern": "adjusted basis", "critical": true},
-        {"name": "gain on disposition", "pattern": "gain", "critical": false}
-      ]
-    },
     {
       "id": "max-allowance",
       "type": "factual",
       "question": "What is the maximum special allowance for rental real estate losses?",
       "expected_answer": "$25,000",
-      "why_hard": "Not hard. This is the control — a well-posed factual lookup that every engine should get. If one misses this, it is broken rather than merely weak.",
+      "why_hard": "Not hard. The control — if an engine misses this it is broken rather than weak.",
       "required_concepts": [
-        {"name": "$25,000 special allowance", "pattern": "\\$25,000|25,000", "critical": true},
+        {"name": "$25,000", "pattern": "25,000", "critical": true},
         {"name": "special allowance", "pattern": "special allowance", "critical": true}
       ]
     },
@@ -111,7 +41,7 @@
       "expected_answer": "$150,000 modified adjusted gross income",
       "required_concepts": [
         {"name": "$150,000", "pattern": "150,000", "critical": true},
-        {"name": "modified adjusted gross income", "pattern": "modified adjusted gross income|MAGI", "critical": false}
+        {"name": "modified adjusted gross income", "pattern": "modified adjusted gross income", "critical": false}
       ]
     },
     {
@@ -136,17 +66,299 @@
       ]
     },
     {
+      "id": "home-sale-exclusion",
+      "type": "factual",
+      "question": "How much profit on a home sale is tax free for a married couple?",
+      "expected_answer": "$500,000 married filing jointly, $250,000 single",
+      "required_concepts": [
+        {"name": "$500,000", "pattern": "500,000", "critical": true},
+        {"name": "$250,000", "pattern": "250,000", "critical": false},
+        {"name": "exclusion", "pattern": "exclu", "critical": false}
+      ]
+    },
+
+    {
+      "id": "rental-below-zero",
+      "type": "strategy",
+      "question": "I had more expenses than rent on my rental house this year, and my income is above the limit for writing that off. Should I take the loss anyway? What are the pros and cons?",
+      "why_hard": "Names none of the rules that govern it. A retriever matching the caller's vocabulary returns generic rental-expense passages and silently omits the passive activity limitation, which is the entire answer.",
+      "required_concepts": [
+        {"name": "passive activity loss", "pattern": "passive activit", "critical": true},
+        {"name": "$25,000 special allowance", "pattern": "25,000", "critical": true},
+        {"name": "MAGI phase-out", "pattern": "150,000|100,000|phase", "critical": true},
+        {"name": "suspended / carryforward", "pattern": "suspend|carr(y|ied) forward|carryover", "critical": false},
+        {"name": "at-risk limits", "pattern": "at-risk|at risk", "critical": false},
+        {"name": "real estate professional", "pattern": "real estate professional", "critical": false}
+      ]
+    },
+    {
+      "id": "suspended-on-sale",
+      "type": "strategy",
+      "question": "My rental has lost money three years running and I have never been able to use the losses. What happens to them if I sell the place?",
+      "required_concepts": [
+        {"name": "passive activity loss", "pattern": "passive activit", "critical": true},
+        {"name": "disposition releases losses", "pattern": "dispos|entire interest", "critical": true},
+        {"name": "suspended / carryforward", "pattern": "suspend|carr(y|ied) forward|carryover", "critical": true}
+      ]
+    },
+    {
+      "id": "skip-depreciation",
+      "type": "strategy",
+      "question": "I don't need the deduction this year. Can I just skip taking depreciation on my rental and save it for later?",
+      "why_hard": "A trap. The intuitive answer is yes; recapture is computed on depreciation allowed OR allowable, so skipping costs you twice.",
+      "required_concepts": [
+        {"name": "allowed or allowable", "pattern": "allowed or allowable|allowable", "critical": true},
+        {"name": "depreciation recapture", "pattern": "recaptur", "critical": true},
+        {"name": "basis reduction", "pattern": "reduce|adjusted basis", "critical": false}
+      ]
+    },
+    {
+      "id": "offset-salary",
+      "type": "vocabulary-gap",
+      "question": "Can I use my rental losses to lower the tax on my day job salary?",
+      "why_hard": "\"Day job salary\" is nonpassive income and \"rental losses\" are passive; the corpus never uses the caller's words.",
+      "required_concepts": [
+        {"name": "passive activity loss", "pattern": "passive activit", "critical": true},
+        {"name": "nonpassive income", "pattern": "nonpassive|non-passive", "critical": true},
+        {"name": "$25,000 special allowance", "pattern": "25,000", "critical": true}
+      ]
+    },
+    {
+      "id": "time-spent-managing",
+      "type": "vocabulary-gap",
+      "question": "I spend a huge amount of time managing my properties myself. Does that change how my losses are treated?",
+      "required_concepts": [
+        {"name": "material participation", "pattern": "material(ly)? participat", "critical": true},
+        {"name": "real estate professional", "pattern": "real estate professional", "critical": true},
+        {"name": "750 hours", "pattern": "750", "critical": false}
+      ]
+    },
+    {
+      "id": "mortgage-no-profit",
+      "type": "vocabulary-gap",
+      "question": "My rental made no money this year but I still paid the mortgage every month. Can I write that off?",
+      "why_hard": "Two different rules hide behind one lay question: only the interest portion is deductible, and the resulting loss is passive.",
+      "required_concepts": [
+        {"name": "mortgage interest deductible", "pattern": "mortgage interest", "critical": true},
+        {"name": "principal is not deductible", "pattern": "principal", "critical": true},
+        {"name": "passive activity loss", "pattern": "passive activit", "critical": false}
+      ]
+    },
+    {
+      "id": "brother-cheap-rent",
+      "type": "vocabulary-gap",
+      "question": "I let my brother stay in my rental for way below market rent. Does that still count as renting it out?",
+      "why_hard": "The governing concepts are fair rental value and personal use days; \"brother\" and \"cheap\" appear nowhere near them.",
+      "required_concepts": [
+        {"name": "fair rental", "pattern": "fair rental", "critical": true},
+        {"name": "personal use", "pattern": "personal use", "critical": true},
+        {"name": "family member", "pattern": "family|relative|brother|sister", "critical": false}
+      ]
+    },
+    {
+      "id": "split-house-and-land",
+      "type": "vocabulary-gap",
+      "question": "I paid one price for the whole property. How do I figure out how much of it counts as the building?",
+      "why_hard": "The rule is that land is not depreciable and basis must be allocated — the question contains neither \"basis\" nor \"land\".",
+      "required_concepts": [
+        {"name": "land is not depreciable", "pattern": "land", "critical": true},
+        {"name": "allocate basis", "pattern": "allocat", "critical": true},
+        {"name": "fair market value", "pattern": "fair market value", "critical": false}
+      ]
+    },
+    {
+      "id": "inherited-rental",
+      "type": "vocabulary-gap",
+      "question": "I inherited a rental house from my mother. What number do I use as its value for taxes?",
+      "why_hard": "The answer is the stepped-up basis at date of death; the asker says \"what number do I use\".",
+      "required_concepts": [
+        {"name": "fair market value at death", "pattern": "fair market value", "critical": true},
+        {"name": "inherited property basis", "pattern": "inherit", "critical": true},
+        {"name": "basis", "pattern": "basis", "critical": false}
+      ]
+    },
+    {
+      "id": "rented-before-selling",
+      "type": "vocabulary-gap",
+      "question": "I rented my house out for a few years before I sold it. Does that change how much profit I can keep tax free?",
+      "why_hard": "The governing term is nonqualified use, which appears 22 times in p523 and never in the question.",
+      "required_concepts": [
+        {"name": "nonqualified use", "pattern": "nonqualified use", "critical": true},
+        {"name": "exclusion is reduced", "pattern": "exclu", "critical": true},
+        {"name": "period of ownership", "pattern": "ownership", "critical": false}
+      ]
+    },
+    {
+      "id": "moved-for-work",
+      "type": "vocabulary-gap",
+      "question": "I only lived in my house 18 months before my job moved me across the country, and I sold it. Do I owe tax on the profit?",
+      "why_hard": "Needs the partial-exclusion safe harbour for a work-related move — the question says \"my job moved me\".",
+      "required_concepts": [
+        {"name": "partial exclusion", "pattern": "partial|reduced (maximum )?exclu", "critical": true},
+        {"name": "work-related move", "pattern": "work-related|change in place of employment|new job location", "critical": true},
+        {"name": "two of five years", "pattern": "2 years|two years", "critical": false}
+      ]
+    },
+    {
+      "id": "never-used-losses-expire",
+      "type": "vocabulary-gap",
+      "question": "I have losses from past years I was never allowed to use. Do those eventually expire?",
+      "required_concepts": [
+        {"name": "carryforward", "pattern": "carr(y|ied) forward|carryover|carried over", "critical": true},
+        {"name": "passive activity", "pattern": "passive activit", "critical": true}
+      ]
+    },
+
+    {
+      "id": "fixed-the-roof",
+      "type": "misleading",
+      "question": "I fixed the roof on my rental this year. Can I deduct the whole cost right now?",
+      "why_hard": "MISLEADING: 'fixed'/'repair' matches repair guidance, which says yes. A roof is almost always a capital improvement, which says no — deduct over 27.5 years. The obvious keyword match points at the wrong answer.",
+      "required_concepts": [
+        {"name": "improvement vs repair", "pattern": "improvement", "critical": true},
+        {"name": "capitalize / depreciate instead", "pattern": "capitaliz|depreciat", "critical": true},
+        {"name": "betterment, restoration, adaptation", "pattern": "betterment|restoration|adaptation", "critical": false}
+      ]
+    },
+    {
+      "id": "tenant-skipped-rent",
+      "type": "misleading",
+      "question": "My tenant skipped out owing me three months of rent. Can I write off what they never paid?",
+      "why_hard": "MISLEADING: 'write off' + 'owed' suggests a bad-debt deduction. For a cash-basis landlord the rent was never included in income, so there is nothing to deduct — the intuitive search finds the wrong rule.",
+      "required_concepts": [
+        {"name": "cash basis — not included in income", "pattern": "cash basis|include.{0,40}in.{0,20}income", "critical": true},
+        {"name": "uncollected rent", "pattern": "uncollect|unpaid rent|not.{0,20}collect", "critical": false}
+      ]
+    },
+    {
+      "id": "missed-depreciation-years",
+      "type": "misleading",
+      "question": "I forgot to claim depreciation on my rental for the last three years. Can I go back and fix it?",
+      "why_hard": "MISLEADING: 'go back and fix' points at amended returns, which is the wrong mechanism. Missed depreciation is corrected with Form 3115, a change in accounting method.",
+      "required_concepts": [
+        {"name": "Form 3115", "pattern": "3115", "critical": true},
+        {"name": "change in accounting method", "pattern": "accounting method", "critical": true},
+        {"name": "allowed or allowable", "pattern": "allowed or allowable|allowable", "critical": false}
+      ]
+    },
+    {
+      "id": "deduct-my-own-time",
+      "type": "misleading",
+      "question": "I spend about ten hours a week managing my rentals myself. Can I deduct the value of my time?",
+      "why_hard": "MISLEADING: matches management fees and rental expense lists, which are deductible. Your own labour is not — there is no deduction for the value of your own services.",
+      "required_concepts": [
+        {"name": "own labor not deductible", "pattern": "own labor|your own services|value of your", "critical": true},
+        {"name": "deductible rental expenses", "pattern": "management fee|ordinary and necessary", "critical": false}
+      ]
+    },
+    {
+      "id": "fridge-for-the-rental",
+      "type": "misleading",
+      "question": "I bought a new fridge for the rental. Do I write that off the same way as the house?",
+      "why_hard": "MISLEADING: matches general rental-expense guidance. Appliances are 5-year property under MACRS, not 27.5-year — a different recovery period entirely.",
+      "required_concepts": [
+        {"name": "5-year property", "pattern": "5-year property", "critical": true},
+        {"name": "appliances / furniture class", "pattern": "appliance|furniture", "critical": true},
+        {"name": "section 179 or bonus", "pattern": "section 179|special depreciation", "critical": false}
+      ]
+    },
+
+    {
+      "id": "depreciate-then-sell",
+      "type": "multi-hop",
+      "question": "If I take depreciation on the rental every year, what happens tax-wise when I eventually sell it?",
+      "why_hard": "Spans depreciation (p946/p527) and recapture on disposition (p946/p925/p523).",
+      "required_concepts": [
+        {"name": "depreciation recapture", "pattern": "recaptur", "critical": true},
+        {"name": "adjusted basis", "pattern": "adjusted basis", "critical": true},
+        {"name": "gain on disposition", "pattern": "gain", "critical": false}
+      ]
+    },
+    {
+      "id": "converted-home",
+      "type": "multi-hop",
+      "question": "I moved out of my house and started renting it instead. What value do I use to start depreciating it?",
+      "why_hard": "Basis on conversion is the lesser of adjusted basis or FMV at conversion — a rule that sits apart from general depreciation guidance.",
+      "required_concepts": [
+        {"name": "fair market value at conversion", "pattern": "fair market value", "critical": true},
+        {"name": "adjusted basis", "pattern": "adjusted basis", "critical": true},
+        {"name": "lesser of", "pattern": "lesser of|smaller of", "critical": false}
+      ]
+    },
+    {
+      "id": "moved-back-in",
+      "type": "multi-hop",
+      "question": "I stopped renting my property and moved back into it myself. What happens to all the depreciation I already took?",
+      "required_concepts": [
+        {"name": "recapture on later sale", "pattern": "recaptur", "critical": true},
+        {"name": "personal use conversion", "pattern": "personal use", "critical": true},
+        {"name": "nonqualified use", "pattern": "nonqualified use|adjusted basis", "critical": false}
+      ]
+    },
+    {
+      "id": "swap-one-rental-for-another",
+      "type": "multi-hop",
+      "question": "I sold one rental and immediately bought another one. Do I owe tax on the first sale right now?",
+      "why_hard": "The mechanism is a like-kind exchange under section 1031; the asker describes it as selling and buying.",
+      "required_concepts": [
+        {"name": "like-kind exchange", "pattern": "like-kind", "critical": true},
+        {"name": "section 1031", "pattern": "1031", "critical": true},
+        {"name": "deferred gain / basis carryover", "pattern": "defer|basis", "critical": false}
+      ]
+    },
+    {
+      "id": "new-deck-when-selling",
+      "type": "multi-hop",
+      "question": "I put in a new deck a few years ago. Does that matter when I sell the house?",
+      "why_hard": "Improvements increase adjusted basis and therefore reduce gain — 'matter when I sell' names neither concept.",
+      "required_concepts": [
+        {"name": "adjusted basis", "pattern": "adjusted basis", "critical": true},
+        {"name": "improvements add to basis", "pattern": "improvement", "critical": true},
+        {"name": "reduces gain", "pattern": "gain", "critical": false}
+      ]
+    },
+    {
+      "id": "big-hvac-all-at-once",
+      "type": "multi-hop",
+      "question": "Can I write off a whole new heating and air system in the first year instead of spreading it out?",
+      "required_concepts": [
+        {"name": "section 179", "pattern": "section 179", "critical": true},
+        {"name": "special depreciation allowance", "pattern": "special depreciation allowance|bonus depreciation", "critical": true},
+        {"name": "improvement property", "pattern": "improvement", "critical": false}
+      ]
+    },
+
+    {
       "id": "out-of-corpus-c-corp",
       "type": "should-abstain",
       "question": "What is the federal corporate income tax rate for a C corporation?",
-      "why_hard": "Not answerable from these publications. A good system says so. A bad one retrieves something tax-shaped and answers with confidence.",
+      "why_hard": "Not answerable from these publications. A good system says so; a bad one retrieves something tax-shaped and answers with confidence.",
       "required_concepts": []
     },
     {
       "id": "out-of-corpus-rd-credit",
       "type": "should-abstain",
       "question": "How do I claim the research and development tax credit for my software company?",
-      "why_hard": "Not in this corpus. Tests whether the engine's confidence tracks its evidence.",
+      "required_concepts": []
+    },
+    {
+      "id": "out-of-corpus-s-corp",
+      "type": "should-abstain",
+      "question": "Should I put my rental into an S corporation, and how do I set one up?",
+      "why_hard": "Entity formation is not covered by these publications, but the question is saturated with rental vocabulary — the hardest abstention case in the set.",
+      "required_concepts": []
+    },
+    {
+      "id": "out-of-corpus-vehicle",
+      "type": "should-abstain",
+      "question": "Can I deduct my truck if I drive it to check on my rental properties?",
+      "why_hard": "Vehicle expenses live in Publication 463, deliberately outside the loaded corpus. Again heavy with in-corpus vocabulary.",
+      "required_concepts": []
+    },
+    {
+      "id": "out-of-corpus-estate-tax",
+      "type": "should-abstain",
+      "question": "What is the federal estate tax exemption amount this year?",
       "required_concepts": []
     }
   ]
