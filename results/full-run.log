@@ -1,0 +1,102 @@
+
+==================================================================
+intelligence-platform  —  lexical (BM25/FTS5)
+==================================================================
+  ✗ rental-below-zero        recall=43% critical=33%  missing critical: passive activity loss, MAGI phase-out
+  ✗ suspended-on-sale        recall=0% critical=0%  missing critical: passive activity loss, disposition releases losses, suspended / carryforward
+  ✓ skip-depreciation        recall=100% critical=100%  
+  ✗ offset-salary            recall=33% critical=33%  missing critical: nonpassive income, $25,000 special allowance
+  ✗ time-spent-managing      recall=33% critical=50%  missing critical: real estate professional
+  ✗ converted-home           recall=0% critical=0%  missing critical: fair market value at conversion, adjusted basis
+  ✗ depreciate-then-sell     recall=33% critical=0%  missing critical: depreciation recapture, adjusted basis
+  ✓ max-allowance            recall=100% critical=100%  
+  ✗ phaseout-threshold       recall=50% critical=0%  missing critical: $150,000
+  ✓ recovery-period          recall=100% critical=100%  
+  ✓ vacation-home-days       recall=100% critical=100%  
+  out-of-corpus-c-corp     top_score=13.368 (5 passages returned)
+  out-of-corpus-rd-credit  top_score=15.775 (5 passages returned)
+
+  MEAN RECALL 54%  |  CRITICAL 47%  |  fully-answerable 4/11  |  5 passages, 0.0s per question
+  DISCRIMINATION (answerable − unanswerable score): +2.383
+
+==================================================================
+voice-optimal-RAG  —  dense (nomic-embed-text-v1.5)
+==================================================================
+  ✗ rental-below-zero        recall=14% critical=0%  missing critical: passive activity loss, $25,000 special allowance, MAGI phase-out
+  ✓ suspended-on-sale        recall=100% critical=100%  
+  ✗ skip-depreciation        recall=33% critical=0%  missing critical: allowed or allowable, depreciation recapture
+  ✓ offset-salary            recall=100% critical=100%  
+  ✗ time-spent-managing      recall=0% critical=0%  missing critical: material participation, real estate professional
+  ✗ converted-home           recall=67% critical=50%  missing critical: fair market value at conversion
+  ✗ depreciate-then-sell     recall=67% critical=50%  missing critical: depreciation recapture
+  ✓ max-allowance            recall=100% critical=100%  
+  ✓ phaseout-threshold       recall=100% critical=100%  
+  ✓ recovery-period          recall=100% critical=100%  
+  ✓ vacation-home-days       recall=100% critical=100%  
+  out-of-corpus-c-corp     top_score=0.611 (5 passages returned)
+  out-of-corpus-rd-credit  top_score=0.612 (5 passages returned)
+
+  MEAN RECALL 71%  |  CRITICAL 64%  |  fully-answerable 6/11  |  5 passages, 0.0s per question
+  DISCRIMINATION (answerable − unanswerable score): +0.097
+
+==================================================================
+HyDE → voice-optimal-RAG  —  hypothetical-document query over dense (nomic-embed-text-v1.5)
+==================================================================
+  ✓ rental-below-zero        recall=86% critical=100%  
+  ✓ suspended-on-sale        recall=100% critical=100%  
+  ✓ skip-depreciation        recall=100% critical=100%  
+  ✓ offset-salary            recall=100% critical=100%  
+  ✓ time-spent-managing      recall=100% critical=100%  
+  ✗ converted-home           recall=33% critical=50%  missing critical: fair market value at conversion
+  ✓ depreciate-then-sell     recall=100% critical=100%  
+  ✓ max-allowance            recall=100% critical=100%  
+  ✓ phaseout-threshold       recall=100% critical=100%  
+  ✓ recovery-period          recall=100% critical=100%  
+  ✓ vacation-home-days       recall=100% critical=100%  
+  out-of-corpus-c-corp     top_score=0.683 (5 passages returned)
+  out-of-corpus-rd-credit  top_score=0.690 (5 passages returned)
+
+  MEAN RECALL 93%  |  CRITICAL 95%  |  fully-answerable 10/11  |  5 passages, 4.0s per question
+  DISCRIMINATION (answerable − unanswerable score): +0.134
+
+==================================================================
+loop×3 → voice-optimal-RAG  —  iterative (3 rounds) over dense (nomic-embed-text-v1.5)
+==================================================================
+  ✓ rental-below-zero        recall=100% critical=100%  
+  ✓ suspended-on-sale        recall=100% critical=100%  
+  ✓ skip-depreciation        recall=100% critical=100%  
+  ✓ offset-salary            recall=100% critical=100%  
+  ✓ time-spent-managing      recall=100% critical=100%  
+  ✓ converted-home           recall=100% critical=100%  
+  ✓ depreciate-then-sell     recall=100% critical=100%  
+  ✓ max-allowance            recall=100% critical=100%  
+  ✓ phaseout-threshold       recall=100% critical=100%  
+  ✓ recovery-period          recall=100% critical=100%  
+  ✓ vacation-home-days       recall=100% critical=100%  
+  out-of-corpus-c-corp     top_score=0.611 (15 passages returned)
+  out-of-corpus-rd-credit  top_score=0.612 (17 passages returned)
+
+  MEAN RECALL 100%  |  CRITICAL 100%  |  fully-answerable 11/11  |  17 passages, 6.0s per question
+  DISCRIMINATION (answerable − unanswerable score): +0.097
+
+==================================================================
+full-context (control)  —  none — entire corpus in the prompt
+==================================================================
+  ✓ rental-below-zero        recall=100% critical=100%  
+  ✓ suspended-on-sale        recall=100% critical=100%  
+  ✓ skip-depreciation        recall=100% critical=100%  
+  ✓ offset-salary            recall=100% critical=100%  
+  ✓ time-spent-managing      recall=100% critical=100%  
+  ✓ converted-home           recall=100% critical=100%  
+  ✓ depreciate-then-sell     recall=100% critical=100%  
+  ✓ max-allowance            recall=100% critical=100%  
+  ✓ phaseout-threshold       recall=100% critical=100%  
+  ✓ recovery-period          recall=100% critical=100%  
+  ✓ vacation-home-days       recall=100% critical=100%  
+  out-of-corpus-c-corp     top_score=1.000 (1 passages returned)
+  out-of-corpus-rd-credit  top_score=1.000 (1 passages returned)
+
+  MEAN RECALL 100%  |  CRITICAL 100%  |  fully-answerable 11/11  |  1 passages, 0.0s per question
+  DISCRIMINATION (answerable − unanswerable score): +0.000
+
+wrote /Users/davidmar/src/rag-bakeoff/results/bakeoff-k5.json

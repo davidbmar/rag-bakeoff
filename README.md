@@ -57,31 +57,67 @@ Engines are declared in `adapters/engines.py`. Adding one is a class with
 
 ## What it found
 
-| engine | retrieval | mean recall | critical | fully answerable |
-|---|---|---|---|---|
-| intelligence-platform | BM25 / FTS5 | 54% | 47% | 4 / 11 |
-| voice-optimal-RAG | dense, nomic-embed-v1.5 | 71% | 64% | 6 / 11 |
-| full context (p527+p925, ~80k tokens) | none | **100%** | **100%** | **11 / 11** |
+| strategy | recall | critical | answerable | passages | latency |
+|---|---|---|---|---|---|
+| intelligence-platform (BM25) | 54% | 47% | 4 / 11 | 5 | ~0s |
+| voice-optimal-RAG (dense) | 71% | 64% | 6 / 11 | 5 | ~0s |
+| dense at equal budget (k=17) | 85% | 86% | 9 / 11 | 17 | ~0s |
+| **HyDE → dense** | **93%** | **95%** | **10 / 11** | **5** | 4s |
+| **loop×3 → dense** | **100%** | **100%** | **11 / 11** | 17 | 6s |
+| full context (p527+p925, ~80k tok) | 100% | 100% | 11 / 11 | — | ~0s |
 
-Raising k from 5 to 10 moves the retrievers to 67% and 77% — better, not
-close.
+### Plain retrieval is not enough, and more of it does not fix it
 
-The two retrievers fail on *different* questions, so fusing them helps: the
-union reaches 7/11. That is a ceiling assuming perfect fusion, and it is still
-four questions short of simply putting the right two publications in the
-prompt.
+The two retrievers fail on *different* questions, so fusion helps — their union
+reaches 7/11 — but that is a ceiling assuming perfect fusion. Four questions
+(`rental-below-zero`, `time-spent-managing`, `converted-home`,
+`depreciate-then-sell`) are reached by neither. They are exactly the strategy,
+vocabulary-gap and multi-hop cases. Every factual lookup passed everywhere.
 
-Four questions are reached by no retrieval strategy tested — `rental-below-zero`,
-`time-spent-managing`, `converted-home`, `depreciate-then-sell`. They are
-exactly the strategy, vocabulary-gap and multi-hop cases. Every factual lookup
-passed everywhere.
+### Query-side strategies close the gap, and they are cheap
+
+Both wrappers attack the same root cause: the caller's words are not the
+corpus's words, so a query built from the question cannot find the governing
+rule. Watch the loop bridge it on the rental question — round 1 searches the
+caller's phrasing, then:
+
+```
+round 2: passive activity loss limitation rental real estate
+         at-risk rules rental property losses
+         rental loss deduction $25000 special allowance
+round 3: passive activity loss limitation deduction ordering rules
+         rental real estate active participation requirements definition
+```
+
+None of those terms appear in the question. HyDE reaches the same vocabulary in
+one shot by writing the passage it expects to exist, then searching with that.
+
+**HyDE is the efficiency result**: 10/11 on the *same five passages* as plain
+dense, for one extra model call. It beats single-shot dense at k=17 (9/11)
+while putting a third as much in the context window.
+
+**The loop is the completeness result**: 11/11, matching full context on 17
+passages instead of 80k tokens.
+
+### The fairness check that matters
+
+A loop sees more passages than a single shot, so beating single-shot k=5 proves
+nothing on its own. At the loop's own budget, single-shot dense scores 9/11 —
+so of the naive 6→11 improvement, +3 is simply seeing more and +2 is the loop
+itself. The loop's advantage is real but smaller than the headline suggests,
+which is why `passages_seen` is recorded for every strategy.
 
 ## The conclusion
 
-For a bounded, stable corpus, **curated long context beats retrieval outright**
-— not marginally, and most decisively on precisely the questions worth asking.
-Retrieval earns its place when the corpus outgrows the window, and hybrid beats
-either channel alone, but neither closes the gap on reasoning questions.
+For a bounded corpus, curated long context is unbeatable on quality and
+trivial to build — 80k tokens answers everything here. But it does not scale
+past the window, and it requires knowing which documents to load.
+
+**The finding worth acting on is that the gap is query-side, not index-side.**
+The engine you already run is not the problem; asking it one question built
+from the caller's vocabulary is. HyDE is one model call in front of an existing
+retriever and recovers most of the loss. The loop recovers the rest when the
+question genuinely spans several rules.
 
 ## Excluded, and why
 

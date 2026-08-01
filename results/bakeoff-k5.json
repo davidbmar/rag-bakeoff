@@ -8,6 +8,8 @@
         "mean_critical_recall": 0.46969696969696967,
         "questions_with_all_criticals": 4,
         "questions_scored": 11,
+        "mean_passages_seen": 5,
+        "mean_latency_ms": 14.912193471735174,
         "discrimination": 2.383025561463702
       },
       "results": [
@@ -32,7 +34,8 @@
           "recall": 0.42857142857142855,
           "critical_recall": 0.3333333333333333,
           "top_score": 21.44891708557251,
-          "latency_ms": 15.230894088745117
+          "latency_ms": 24.86395835876465,
+          "passages_seen": 5
         },
         {
           "id": "suspended-on-sale",
@@ -51,7 +54,8 @@
           "recall": 0.0,
           "critical_recall": 0.0,
           "top_score": 17.71375609848858,
-          "latency_ms": 15.465021133422852
+          "latency_ms": 15.813827514648438,
+          "passages_seen": 5
         },
         {
           "id": "skip-depreciation",
@@ -66,7 +70,8 @@
           "recall": 1.0,
           "critical_recall": 1.0,
           "top_score": 19.060536769800162,
-          "latency_ms": 14.303922653198242
+          "latency_ms": 15.218973159790039,
+          "passages_seen": 5
         },
         {
           "id": "offset-salary",
@@ -85,7 +90,8 @@
           "recall": 0.3333333333333333,
           "critical_recall": 0.3333333333333333,
           "top_score": 14.09285783766848,
-          "latency_ms": 14.837026596069336
+          "latency_ms": 15.153169631958008,
+          "passages_seen": 5
         },
         {
           "id": "time-spent-managing",
@@ -103,7 +109,8 @@
           "recall": 0.3333333333333333,
           "critical_recall": 0.5,
           "top_score": 12.952578667900612,
-          "latency_ms": 13.701200485229492
+          "latency_ms": 13.307809829711914,
+          "passages_seen": 5
         },
         {
           "id": "converted-home",
@@ -121,7 +128,8 @@
           "recall": 0.0,
           "critical_recall": 0.0,
           "top_score": 18.930344789673967,
-          "latency_ms": 13.123035430908203
+          "latency_ms": 14.458894729614258,
+          "passages_seen": 5
         },
         {
           "id": "depreciate-then-sell",
@@ -140,7 +148,8 @@
           "recall": 0.3333333333333333,
           "critical_recall": 0.0,
           "top_score": 10.56592840085083,
-          "latency_ms": 13.196945190429688
+          "latency_ms": 13.826847076416016,
+          "passages_seen": 5
         },
         {
           "id": "max-allowance",
@@ -154,7 +163,8 @@
           "recall": 1.0,
           "critical_recall": 1.0,
           "top_score": 21.6624621220149,
-          "latency_ms": 12.193918228149414
+          "latency_ms": 11.88206672668457,
+          "passages_seen": 5
         },
         {
           "id": "phaseout-threshold",
@@ -171,7 +181,8 @@
           "recall": 0.5,
           "critical_recall": 0.0,
           "top_score": 19.750622636856917,
-          "latency_ms": 13.346195220947266
+          "latency_ms": 13.510704040527344,
+          "passages_seen": 5
         },
         {
           "id": "recovery-period",
@@ -185,7 +196,8 @@
           "recall": 1.0,
           "critical_recall": 1.0,
           "top_score": 15.156734073262031,
-          "latency_ms": 35.39681434631348
+          "latency_ms": 12.40396499633789,
+          "passages_seen": 5
         },
         {
           "id": "vacation-home-days",
@@ -200,7 +212,8 @@
           "recall": 1.0,
           "critical_recall": 1.0,
           "top_score": 15.168670847764613,
-          "latency_ms": 13.988018035888672
+          "latency_ms": 13.593912124633789,
+          "passages_seen": 5
         },
         {
           "id": "out-of-corpus-c-corp",
@@ -223,6 +236,8 @@
         "mean_critical_recall": 0.6363636363636364,
         "questions_with_all_criticals": 6,
         "questions_scored": 11,
+        "mean_passages_seen": 5,
+        "mean_latency_ms": 48.012278296730734,
         "discrimination": 0.09703636363636359
       },
       "results": [
@@ -248,7 +263,8 @@
           "recall": 0.14285714285714285,
           "critical_recall": 0.0,
           "top_score": 0.6786,
-          "latency_ms": 40.24100303649902
+          "latency_ms": 164.27016258239746,
+          "passages_seen": 5
         },
         {
           "id": "suspended-on-sale",
@@ -263,7 +279,8 @@
           "recall": 1.0,
           "critical_recall": 1.0,
           "top_score": 0.6605,
-          "latency_ms": 22.653818130493164
+          "latency_ms": 45.686960220336914,
+          "passages_seen": 5
         },
         {
           "id": "skip-depreciation",
@@ -282,7 +299,8 @@
           "recall": 0.3333333333333333,
           "critical_recall": 0.0,
           "top_score": 0.7163,
-          "latency_ms": 20.494937896728516
+          "latency_ms": 40.91787338256836,
+          "passages_seen": 5
         },
         {
           "id": "offset-salary",
@@ -297,7 +315,8 @@
           "recall": 1.0,
           "critical_recall": 1.0,
           "top_score": 0.664,
-          "latency_ms": 20.097017288208008
+          "latency_ms": 35.08496284484863,
+          "passages_seen": 5
         },
         {
           "id": "time-spent-managing",
@@ -315,7 +334,8 @@
           "recall": 0.0,
           "critical_recall": 0.0,
           "top_score": 0.6379,
-          "latency_ms": 19.8819637298584
+          "latency_ms": 35.23826599121094,
+          "passages_seen": 5
         },
         {
           "id": "converted-home",
@@ -333,7 +353,8 @@
           "recall": 0.6666666666666666,
           "critical_recall": 0.5,
           "top_score": 0.7272,
-          "latency_ms": 22.13573455810547
+          "latency_ms": 37.770986557006836,
+          "passages_seen": 5
         },
         {
           "id": "depreciate-then-sell",
@@ -351,7 +372,8 @@
           "recall": 0.6666666666666666,
           "critical_recall": 0.5,
           "top_score": 0.747,
-          "latency_ms": 20.08819580078125
+          "latency_ms": 37.123918533325195,
+          "passages_seen": 5
         },
         {
           "id": "max-allowance",
@@ -365,7 +387,8 @@
           "recall": 1.0,
           "critical_recall": 1.0,
           "top_score": 0.6992,
-          "latency_ms": 19.430160522460938
+          "latency_ms": 36.62896156311035,
+          "passages_seen": 5
         },
         {
           "id": "phaseout-threshold",
@@ -379,7 +402,8 @@
           "recall": 1.0,
           "critical_recall": 1.0,
           "top_score": 0.6989,
-          "latency_ms": 20.784854888916016
+          "latency_ms": 36.68522834777832,
+          "passages_seen": 5
         },
         {
           "id": "recovery-period",
@@ -393,7 +417,8 @@
           "recall": 1.0,
           "critical_recall": 1.0,
           "top_score": 0.79,
-          "latency_ms": 20.957231521606445
+          "latency_ms": 30.188798904418945,
+          "passages_seen": 5
         },
         {
           "id": "vacation-home-days",
@@ -408,7 +433,8 @@
           "recall": 1.0,
           "critical_recall": 1.0,
           "top_score": 0.7765,
-          "latency_ms": 20.387887954711914
+          "latency_ms": 28.538942337036133,
+          "passages_seen": 5
         },
         {
           "id": "out-of-corpus-c-corp",
@@ -424,6 +450,416 @@
         }
       ]
     },
+    "HyDE \u2192 voice-optimal-RAG": {
+      "retrieval": "hypothetical-document query over dense (nomic-embed-text-v1.5)",
+      "summary": {
+        "mean_recall": 0.9264069264069263,
+        "mean_critical_recall": 0.9545454545454546,
+        "questions_with_all_criticals": 10,
+        "questions_scored": 11,
+        "mean_passages_seen": 5,
+        "mean_latency_ms": 4004.3875520879574,
+        "discrimination": 0.1335409090909091
+      },
+      "results": [
+        {
+          "id": "rental-below-zero",
+          "type": "strategy",
+          "found": [
+            "passive activity loss",
+            "$25,000 special allowance",
+            "MAGI phase-out",
+            "at-risk limits",
+            "real estate professional",
+            "Form 8582"
+          ],
+          "missing": [
+            "suspended / carryforward"
+          ],
+          "critical_missing": [],
+          "recall": 0.8571428571428571,
+          "critical_recall": 1.0,
+          "top_score": 0.8086,
+          "latency_ms": 4897.183895111084,
+          "passages_seen": 5
+        },
+        {
+          "id": "suspended-on-sale",
+          "type": "strategy",
+          "found": [
+            "passive activity loss",
+            "disposition releases losses",
+            "suspended / carryforward"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 0.8185,
+          "latency_ms": 4456.391096115112,
+          "passages_seen": 5
+        },
+        {
+          "id": "skip-depreciation",
+          "type": "strategy",
+          "found": [
+            "allowed or allowable",
+            "depreciation recapture",
+            "basis reduction"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 0.794,
+          "latency_ms": 3831.2599658966064,
+          "passages_seen": 5
+        },
+        {
+          "id": "offset-salary",
+          "type": "vocabulary-gap",
+          "found": [
+            "passive activity loss",
+            "nonpassive income",
+            "$25,000 special allowance"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 0.8454,
+          "latency_ms": 3960.3497982025146,
+          "passages_seen": 5
+        },
+        {
+          "id": "time-spent-managing",
+          "type": "vocabulary-gap",
+          "found": [
+            "material participation",
+            "real estate professional",
+            "750 hours"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 0.8025,
+          "latency_ms": 4186.118841171265,
+          "passages_seen": 5
+        },
+        {
+          "id": "converted-home",
+          "type": "multi-hop",
+          "found": [
+            "adjusted basis"
+          ],
+          "missing": [
+            "fair market value at conversion",
+            "lesser of"
+          ],
+          "critical_missing": [
+            "fair market value at conversion"
+          ],
+          "recall": 0.3333333333333333,
+          "critical_recall": 0.5,
+          "top_score": 0.8527,
+          "latency_ms": 4257.817029953003,
+          "passages_seen": 5
+        },
+        {
+          "id": "depreciate-then-sell",
+          "type": "multi-hop",
+          "found": [
+            "depreciation recapture",
+            "adjusted basis",
+            "gain on disposition"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 0.7925,
+          "latency_ms": 3895.620107650757,
+          "passages_seen": 5
+        },
+        {
+          "id": "max-allowance",
+          "type": "factual",
+          "found": [
+            "$25,000 special allowance",
+            "special allowance"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 0.8314,
+          "latency_ms": 3291.483163833618,
+          "passages_seen": 5
+        },
+        {
+          "id": "phaseout-threshold",
+          "type": "factual",
+          "found": [
+            "$150,000",
+            "modified adjusted gross income"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 0.7992,
+          "latency_ms": 2413.9490127563477,
+          "passages_seen": 5
+        },
+        {
+          "id": "recovery-period",
+          "type": "factual",
+          "found": [
+            "27.5 years",
+            "residential rental"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 0.8144,
+          "latency_ms": 3267.77720451355,
+          "passages_seen": 5
+        },
+        {
+          "id": "vacation-home-days",
+          "type": "factual",
+          "found": [
+            "14 days",
+            "10% of days rented",
+            "personal use"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 0.864,
+          "latency_ms": 5590.312957763672,
+          "passages_seen": 5
+        },
+        {
+          "id": "out-of-corpus-c-corp",
+          "type": "should-abstain",
+          "top_score": 0.6834,
+          "chunks": 5
+        },
+        {
+          "id": "out-of-corpus-rd-credit",
+          "type": "should-abstain",
+          "top_score": 0.6901,
+          "chunks": 5
+        }
+      ]
+    },
+    "loop\u00d73 \u2192 voice-optimal-RAG": {
+      "retrieval": "iterative (3 rounds) over dense (nomic-embed-text-v1.5)",
+      "summary": {
+        "mean_recall": 1.0,
+        "mean_critical_recall": 1.0,
+        "questions_with_all_criticals": 11,
+        "questions_scored": 11,
+        "mean_passages_seen": 16.818181818181817,
+        "mean_latency_ms": 6011.977239088578,
+        "discrimination": 0.09703636363636359
+      },
+      "results": [
+        {
+          "id": "rental-below-zero",
+          "type": "strategy",
+          "found": [
+            "passive activity loss",
+            "$25,000 special allowance",
+            "MAGI phase-out",
+            "suspended / carryforward",
+            "at-risk limits",
+            "real estate professional",
+            "Form 8582"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 0.6786,
+          "latency_ms": 5823.141098022461,
+          "passages_seen": 25
+        },
+        {
+          "id": "suspended-on-sale",
+          "type": "strategy",
+          "found": [
+            "passive activity loss",
+            "disposition releases losses",
+            "suspended / carryforward"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 0.6605,
+          "latency_ms": 6957.144021987915,
+          "passages_seen": 17
+        },
+        {
+          "id": "skip-depreciation",
+          "type": "strategy",
+          "found": [
+            "allowed or allowable",
+            "depreciation recapture",
+            "basis reduction"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 0.7163,
+          "latency_ms": 12408.468961715698,
+          "passages_seen": 27
+        },
+        {
+          "id": "offset-salary",
+          "type": "vocabulary-gap",
+          "found": [
+            "passive activity loss",
+            "nonpassive income",
+            "$25,000 special allowance"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 0.664,
+          "latency_ms": 4900.584936141968,
+          "passages_seen": 19
+        },
+        {
+          "id": "time-spent-managing",
+          "type": "vocabulary-gap",
+          "found": [
+            "material participation",
+            "real estate professional",
+            "750 hours"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 0.6379,
+          "latency_ms": 6375.939846038818,
+          "passages_seen": 15
+        },
+        {
+          "id": "converted-home",
+          "type": "multi-hop",
+          "found": [
+            "fair market value at conversion",
+            "adjusted basis",
+            "lesser of"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 0.7272,
+          "latency_ms": 5849.470138549805,
+          "passages_seen": 13
+        },
+        {
+          "id": "depreciate-then-sell",
+          "type": "multi-hop",
+          "found": [
+            "depreciation recapture",
+            "adjusted basis",
+            "gain on disposition"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 0.747,
+          "latency_ms": 6333.496809005737,
+          "passages_seen": 21
+        },
+        {
+          "id": "max-allowance",
+          "type": "factual",
+          "found": [
+            "$25,000 special allowance",
+            "special allowance"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 0.6992,
+          "latency_ms": 4925.656795501709,
+          "passages_seen": 20
+        },
+        {
+          "id": "phaseout-threshold",
+          "type": "factual",
+          "found": [
+            "$150,000",
+            "modified adjusted gross income"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 0.6989,
+          "latency_ms": 5640.084981918335,
+          "passages_seen": 14
+        },
+        {
+          "id": "recovery-period",
+          "type": "factual",
+          "found": [
+            "27.5 years",
+            "residential rental"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 0.79,
+          "latency_ms": 1382.4622631072998,
+          "passages_seen": 5
+        },
+        {
+          "id": "vacation-home-days",
+          "type": "factual",
+          "found": [
+            "14 days",
+            "10% of days rented",
+            "personal use"
+          ],
+          "missing": [],
+          "critical_missing": [],
+          "recall": 1.0,
+          "critical_recall": 1.0,
+          "top_score": 0.7765,
+          "latency_ms": 5535.299777984619,
+          "passages_seen": 9
+        },
+        {
+          "id": "out-of-corpus-c-corp",
+          "type": "should-abstain",
+          "top_score": 0.6114,
+          "chunks": 15
+        },
+        {
+          "id": "out-of-corpus-rd-credit",
+          "type": "should-abstain",
+          "top_score": 0.612,
+          "chunks": 17
+        }
+      ]
+    },
     "full-context (control)": {
       "retrieval": "none \u2014 entire corpus in the prompt",
       "summary": {
@@ -431,6 +867,8 @@
         "mean_critical_recall": 1.0,
         "questions_with_all_criticals": 11,
         "questions_scored": 11,
+        "mean_passages_seen": 1,
+        "mean_latency_ms": 0.0,
         "discrimination": 0.0
       },
       "results": [
@@ -451,7 +889,8 @@
           "recall": 1.0,
           "critical_recall": 1.0,
           "top_score": 1.0,
-          "latency_ms": 0.0
+          "latency_ms": 0.0,
+          "passages_seen": 1
         },
         {
           "id": "suspended-on-sale",
@@ -466,7 +905,8 @@
           "recall": 1.0,
           "critical_recall": 1.0,
           "top_score": 1.0,
-          "latency_ms": 0.0
+          "latency_ms": 0.0,
+          "passages_seen": 1
         },
         {
           "id": "skip-depreciation",
@@ -481,7 +921,8 @@
           "recall": 1.0,
           "critical_recall": 1.0,
           "top_score": 1.0,
-          "latency_ms": 0.0
+          "latency_ms": 0.0,
+          "passages_seen": 1
         },
         {
           "id": "offset-salary",
@@ -496,7 +937,8 @@
           "recall": 1.0,
           "critical_recall": 1.0,
           "top_score": 1.0,
-          "latency_ms": 0.0
+          "latency_ms": 0.0,
+          "passages_seen": 1
         },
         {
           "id": "time-spent-managing",
@@ -511,7 +953,8 @@
           "recall": 1.0,
           "critical_recall": 1.0,
           "top_score": 1.0,
-          "latency_ms": 0.0
+          "latency_ms": 0.0,
+          "passages_seen": 1
         },
         {
           "id": "converted-home",
@@ -526,7 +969,8 @@
           "recall": 1.0,
           "critical_recall": 1.0,
           "top_score": 1.0,
-          "latency_ms": 0.0
+          "latency_ms": 0.0,
+          "passages_seen": 1
         },
         {
           "id": "depreciate-then-sell",
@@ -541,7 +985,8 @@
           "recall": 1.0,
           "critical_recall": 1.0,
           "top_score": 1.0,
-          "latency_ms": 0.0
+          "latency_ms": 0.0,
+          "passages_seen": 1
         },
         {
           "id": "max-allowance",
@@ -555,7 +1000,8 @@
           "recall": 1.0,
           "critical_recall": 1.0,
           "top_score": 1.0,
-          "latency_ms": 0.0
+          "latency_ms": 0.0,
+          "passages_seen": 1
         },
         {
           "id": "phaseout-threshold",
@@ -569,7 +1015,8 @@
           "recall": 1.0,
           "critical_recall": 1.0,
           "top_score": 1.0,
-          "latency_ms": 0.0
+          "latency_ms": 0.0,
+          "passages_seen": 1
         },
         {
           "id": "recovery-period",
@@ -583,7 +1030,8 @@
           "recall": 1.0,
           "critical_recall": 1.0,
           "top_score": 1.0,
-          "latency_ms": 0.0
+          "latency_ms": 0.0,
+          "passages_seen": 1
         },
         {
           "id": "vacation-home-days",
@@ -598,7 +1046,8 @@
           "recall": 1.0,
           "critical_recall": 1.0,
           "top_score": 1.0,
-          "latency_ms": 0.0
+          "latency_ms": 0.0,
+          "passages_seen": 1
         },
         {
           "id": "out-of-corpus-c-corp",

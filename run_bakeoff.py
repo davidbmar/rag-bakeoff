@@ -33,6 +33,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 from adapters.engines import FullContext, IntelligencePlatform, VoiceOptimalRAG  # noqa: E402
+from adapters.strategies import HyDE, IterativeLoop  # noqa: E402
 
 ROOT = Path(__file__).parent
 
@@ -70,9 +71,15 @@ def main() -> int:
     args = parser.parse_args()
 
     spec = json.loads((ROOT / "questions.json").read_text())
+    dense = VoiceOptimalRAG()
     engines = [
         IntelligencePlatform(base_url="http://127.0.0.1:8124"),
-        VoiceOptimalRAG(),
+        dense,
+        # Query-side strategies over the strongest single retriever. Both are
+        # wrappers, not new engines — the point being that neither requires
+        # replacing an index you already have.
+        HyDE(dense),
+        IterativeLoop(dense, rounds=3, per_round=3),
         # The realistic form of the no-retrieval option: the two publications
         # that actually govern these questions, ~80k tokens.
         FullContext(subset=["p527", "p925"]),
@@ -140,7 +147,10 @@ def main() -> int:
                 f"critical={scored['critical_recall']:.0%}  {detail}"
             )
             results.append({"id": question["id"], "type": question["type"], **scored,
-                            "top_score": got.top_score, "latency_ms": got.latency_ms})
+                            "top_score": got.top_score, "latency_ms": got.latency_ms,
+                            # A multi-round strategy sees more passages than a
+                            # single shot; without this the comparison flatters it.
+                            "passages_seen": len(got.chunks)})
 
         scored_only = [r for r in results if r.get("recall") is not None]
         if scored_only:
@@ -153,6 +163,12 @@ def main() -> int:
                     1 for r in scored_only if not r["critical_missing"]
                 ),
                 "questions_scored": len(scored_only),
+                "mean_passages_seen": statistics.mean(
+                    r.get("passages_seen", 0) for r in scored_only
+                ),
+                "mean_latency_ms": statistics.mean(
+                    r.get("latency_ms", 0) for r in scored_only
+                ),
             }
             if answerable_scores and abstain_scores:
                 summary["discrimination"] = (
@@ -167,7 +183,9 @@ def main() -> int:
                 f"\n  MEAN RECALL {summary['mean_recall']:.0%}  |  "
                 f"CRITICAL {summary['mean_critical_recall']:.0%}  |  "
                 f"fully-answerable {summary['questions_with_all_criticals']}"
-                f"/{summary['questions_scored']}"
+                f"/{summary['questions_scored']}  |  "
+                f"{summary['mean_passages_seen']:.0f} passages, "
+                f"{summary['mean_latency_ms'] / 1000:.1f}s per question"
             )
             if "discrimination" in summary:
                 print(f"  DISCRIMINATION (answerable − unanswerable score): "
