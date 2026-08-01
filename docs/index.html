@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>What we learned measuring six RAG systems</title>
+<style>
+  :root {
+    --bg: #fbfaf8; --fg: #1c1b19; --muted: #6b6862; --rule: #e3e0da;
+    --accent: #9a3412; --good: #166534; --bad: #9f1239; --card: #ffffff;
+    --code-bg: #f4f2ee;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #131313; --fg: #e8e6e3; --muted: #9a968e; --rule: #2c2b28;
+      --accent: #fb923c; --good: #4ade80; --bad: #fb7185; --card: #1a1a19;
+      --code-bg: #1f1e1c;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0 1.25rem 6rem;
+    background: var(--bg); color: var(--fg);
+    font: 16px/1.65 ui-serif, Georgia, "Times New Roman", serif;
+    -webkit-text-size-adjust: 100%;
+  }
+  main { max-width: 47rem; margin: 0 auto; }
+  header { padding: 4rem 0 2.5rem; border-bottom: 1px solid var(--rule); margin-bottom: 2.5rem; }
+  h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); line-height: 1.15; margin: 0 0 .75rem; letter-spacing: -.02em; }
+  .standfirst { font-size: 1.12rem; color: var(--muted); margin: 0; }
+  .meta { margin-top: 1.5rem; font: 500 .72rem/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+          letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  h2 { font-size: 1.35rem; margin: 3rem 0 .9rem; letter-spacing: -.01em; }
+  h3 { font-size: 1.05rem; margin: 2rem 0 .5rem; }
+  p, li { font-size: 1.02rem; }
+  a { color: var(--accent); }
+  code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  code { background: var(--code-bg); padding: .1em .35em; border-radius: 3px; font-size: .87em; }
+  pre {
+    background: var(--code-bg); padding: 1rem 1.1rem; border-radius: 8px;
+    overflow-x: auto; font-size: .82rem; line-height: 1.55; border: 1px solid var(--rule);
+  }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  .lede { font-size: 1.12rem; }
+  .table-wrap { overflow-x: auto; margin: 1.25rem 0; }
+  table { border-collapse: collapse; width: 100%; font-size: .92rem; min-width: 34rem; }
+  th, td { text-align: left; padding: .55rem .7rem; border-bottom: 1px solid var(--rule); }
+  th { font: 600 .72rem/1.4 ui-monospace, Menlo, monospace; letter-spacing: .06em;
+       text-transform: uppercase; color: var(--muted); }
+  td.num { text-align: right; font-family: ui-monospace, Menlo, monospace; font-size: .88rem; }
+  tr.win td { background: color-mix(in srgb, var(--good) 9%, transparent); font-weight: 600; }
+  tr.baseline td { color: var(--muted); }
+  .callout {
+    background: var(--card); border: 1px solid var(--rule); border-left: 3px solid var(--accent);
+    padding: 1.1rem 1.3rem; border-radius: 6px; margin: 1.75rem 0;
+  }
+  .callout p:first-child { margin-top: 0; } .callout p:last-child { margin-bottom: 0; }
+  .lesson { border-top: 1px solid var(--rule); padding-top: 1.4rem; margin-top: 1.9rem; }
+  .lesson h3 { margin-top: 0; }
+  .lesson-n {
+    font: 600 .7rem/1 ui-monospace, Menlo, monospace; letter-spacing: .1em;
+    color: var(--accent); display: block; margin-bottom: .45rem;
+  }
+  .good { color: var(--good); } .bad { color: var(--bad); }
+  footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--rule);
+           color: var(--muted); font-size: .9rem; }
+  ul.tight li { margin-bottom: .35rem; }
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <h1>The retriever was never the problem</h1>
+  <p class="standfirst">
+    Six document-QA systems, one tax question none of them could answer, and
+    what a day of measurement turned up.
+  </p>
+  <p class="meta">rag-bakeoff · 13 questions · 5 IRS publications · 393k tokens</p>
+</header>
+
+<p class="lede">
+  It started with a question a person would actually ask: <em>“I had more
+  expenses than rent on my rental house this year. Should I deduct the loss
+  below zero? What are the pros and cons?”</em>
+</p>
+
+<p>
+  That question is governed by the passive activity loss rules, the $25,000
+  special allowance and its phase-out, the at-risk limits, and depreciation
+  recapture years later. It contains none of those words. Which turns out to be
+  the whole story.
+</p>
+
+<h2>What was measured, and why not answers</h2>
+
+<p>
+  For each question, the concepts you <em>must</em> have in front of you to
+  answer correctly were written down in advance and verified to exist in the
+  corpus before anything was run — so a miss is always a retrieval failure and
+  never a gap in the source material. An engine scores on how many of those its
+  retrieved passages actually contain.
+</p>
+
+<p>
+  Final answers were deliberately not judged. An LLM grader conflates two
+  different failures: not finding the material, and mishandling material you
+  did find. Only the first decides whether an architecture can work at all. A
+  model cannot reason from a passage it was never shown.
+</p>
+
+<h2>Results</h2>
+
+<div class="table-wrap">
+<table>
+  <thead>
+    <tr>
+      <th>Strategy</th><th>Retrieval</th>
+      <th class="num">Recall</th><th class="num">Critical</th>
+      <th class="num">Answerable</th><th class="num">Passages</th><th class="num">Latency</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>intelligence-platform</td><td>BM25 / FTS5</td>
+        <td class="num">54%</td><td class="num">47%</td><td class="num">4 / 11</td>
+        <td class="num">5</td><td class="num">15 ms</td></tr>
+    <tr><td>voice-optimal-RAG</td><td>dense, nomic-embed-v1.5</td>
+        <td class="num">71%</td><td class="num">64%</td><td class="num">6 / 11</td>
+        <td class="num">5</td><td class="num">48 ms</td></tr>
+    <tr class="baseline"><td>dense at equal budget</td><td>same, k=17</td>
+        <td class="num">85%</td><td class="num">86%</td><td class="num">9 / 11</td>
+        <td class="num">17</td><td class="num">~50 ms</td></tr>
+    <tr class="win"><td>HyDE → dense</td><td>hypothetical-document query</td>
+        <td class="num">93%</td><td class="num">95%</td><td class="num">10 / 11</td>
+        <td class="num">5</td><td class="num">4.0 s</td></tr>
+    <tr class="win"><td>loop ×3 → dense</td><td>iterative, 3 rounds</td>
+        <td class="num">100%</td><td class="num">100%</td><td class="num">11 / 11</td>
+        <td class="num">17</td><td class="num">6.0 s</td></tr>
+    <tr class="baseline"><td>full context</td><td>none — 80k tokens in the prompt</td>
+        <td class="num">100%</td><td class="num">100%</td><td class="num">11 / 11</td>
+        <td class="num">—</td><td class="num">~0 ms</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+  <strong>Critical</strong> counts only the concepts whose absence makes the
+  answer actively wrong rather than merely thin. Missing the passive-activity
+  rule on the rental question does not produce a vaguer answer; it produces a
+  confident and incorrect one.
+</p>
+
+<h2>The mechanism, in one screen</h2>
+
+<p>
+  Every question that plain retrieval failed, failed the same way. Here is the
+  loop working the rental question — round one searches the caller's own
+  phrasing, and then:
+</p>
+
+<pre><code>round 2: passive activity loss limitation rental real estate
+         at-risk rules rental property losses
+         rental loss deduction $25000 special allowance
+
+round 3: passive activity loss limitation deduction ordering rules
+         rental real estate active participation requirements definition
+         excess business loss limitation noncorporate taxpayers</code></pre>
+
+<p>
+  Not one of those phrases appears in the question. The model read what came
+  back, noticed what was missing, and searched again in the corpus's own
+  vocabulary. HyDE reaches the same place in a single shot by writing the
+  passage it expects to exist — <em>“…subject to the passive activity loss
+  limitations under section 469…”</em> — and searching with that instead of
+  with the question.
+</p>
+
+<div class="callout">
+  <p>
+    <strong>This is the finding.</strong> The gap is <em>query-side</em>, not
+    index-side. Six engines were built over the years and none of them was the
+    problem. Asking any of them a single question phrased in the caller's
+    vocabulary was.
+  </p>
+</div>
+
+<h2>Seven things worth keeping</h2>
+
+<div class="lesson">
+  <span class="lesson-n">01</span>
+  <h3>Question type predicts failure; engine quality barely does</h3>
+  <p>
+    Every factual lookup passed on every engine. Every strategy, vocabulary-gap
+    and multi-hop question failed on plain retrieval, on both engines, at every
+    k. “Is our RAG good?” is unanswerable. “Good at which kind of question?” is
+    the only version with a number attached.
+  </p>
+</div>
+
+<div class="lesson">
+  <span class="lesson-n">02</span>
+  <h3>Better embeddings help and do not save you</h3>
+  <p>
+    Dense beat BM25 by 17 points — real, and worth having. It still failed the
+    question that prompted the whole exercise, scoring <span class="bad">14%</span>
+    where keyword search managed 43%. No embedding model fixes a query that
+    does not contain the concept.
+  </p>
+</div>
+
+<div class="lesson">
+  <span class="lesson-n">03</span>
+  <h3>Lexical and dense fail on different questions</h3>
+  <p>
+    BM25 alone answered 4 of 11, dense 6, their union 7. That is the honest case
+    for hybrid retrieval — and also its ceiling, assuming perfect fusion. Still
+    four short of simply loading the right two publications.
+  </p>
+</div>
+
+<div class="lesson">
+  <span class="lesson-n">04</span>
+  <h3>Count the passages, or multi-round strategies flatter themselves</h3>
+  <p>
+    The loop went from 6/11 to 11/11 — but it saw 17 passages against five. At
+    <em>equal budget</em>, single-shot dense scores 9/11. So <span class="good">+3
+    was just seeing more</span> and only +2 was the loop. Any comparison that
+    does not report passages seen is measuring context size and calling it
+    intelligence.
+  </p>
+</div>
+
+<div class="lesson">
+  <span class="lesson-n">05</span>
+  <h3>A score that cannot discriminate cannot abstain</h3>
+  <p>
+    The production engine's <code>normalized_score</code> is scaled per query,
+    so the top hit is always exactly 1.000. Its raw BM25 score for <em>“what is
+    the corporate tax rate for a C corporation”</em> — a question the corpus
+    cannot answer — came back <span class="bad">higher</span> than for a
+    genuine in-corpus question. It only goes quiet on queries sharing no
+    vocabulary at all. Nothing built on top of it can say “I don't know”, which
+    for advice is the worst available failure.
+  </p>
+</div>
+
+<div class="lesson">
+  <span class="lesson-n">06</span>
+  <h3>Long context is the baseline everyone skips</h3>
+  <p>
+    Two publications, 80k tokens, no retrieval, no chunking, no infrastructure:
+    100% on every question. If the corpus fits in the window, retrieval is a
+    premature optimisation — and it is worth checking whether it fits before
+    building anything.
+  </p>
+</div>
+
+<div class="lesson">
+  <span class="lesson-n">07</span>
+  <h3>Six implementations existed because nothing was ever measured</h3>
+  <p>
+    With no way to tell whether a new system beat an old one, building the
+    seventh always looked as reasonable as improving the third. The eval that
+    settles it took a day and would have prevented years of parallel building.
+    It is also the cheapest artifact here to keep.
+  </p>
+</div>
+
+<h2>So — is the answer to loop?</h2>
+
+<p>Not first. The ordering that falls out of the numbers:</p>
+
+<ul class="tight">
+  <li>
+    <strong>Does the corpus fit in the window?</strong> Load it and stop. Nothing
+    else here beats 100% for zero engineering.
+  </li>
+  <li>
+    <strong>If not, add HyDE.</strong> One model call in front of the retriever
+    you already run. 10 of 11 on the <em>same five passages</em> as plain dense,
+    beating single-shot retrieval at three times the context. Best ratio on the
+    board by a distance.
+  </li>
+  <li>
+    <strong>Loop only for questions that genuinely span several rules.</strong>
+    It buys the last question and costs 3× the passages and 6 seconds. Route to
+    it rather than defaulting to it.
+  </li>
+  <li>
+    <strong>Take the loop's stopping signal for free.</strong> When it reports
+    it has enough, that is also the abstention signal — the one the keyword
+    engine is structurally incapable of producing.
+  </li>
+</ul>
+
+<h2>What this does not tell you</h2>
+
+<ul class="tight">
+  <li>
+    Retrieval was scored, not answers. A system can retrieve everything and
+    still reason badly.
+  </li>
+  <li>
+    One domain, one corpus, 13 questions. Tax guidance is unusually
+    well-structured; narrative or conversational corpora may behave differently.
+  </li>
+  <li>
+    No reranker was tested. The literature puts cross-encoder reranking in the
+    15–48% range and one already exists in the portfolio, unused for documents.
+  </li>
+  <li>
+    Three of the six systems could not take this corpus at all and were
+    excluded, with reasons, rather than quietly dropped.
+  </li>
+  <li>
+    Nothing here touches the hardest part of the original question: the answer
+    depends on the asker's income, participation hours and basis, which are in
+    no document. The best system asks before it answers.
+  </li>
+</ul>
+
+<footer>
+  <p>
+    Reproduce with <code>python3 validate_questions.py</code> (checks the answer
+    key against the corpus first), then <code>run_bakeoff.py --ingest</code> and
+    <code>analyze.py</code>. Engines and strategies are classes with three
+    methods; adding one is a few lines in <code>adapters/</code>.
+  </p>
+</footer>
+
+</main>
+</body>
+</html>
