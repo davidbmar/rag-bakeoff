@@ -57,13 +57,29 @@ Engines are declared in `adapters/engines.py`. Adding one is a class with
 
 ## What it found
 
+Two names worth pinning down first, because the literature uses them constantly
+and they sound more exotic than they are:
+
+- **Sparse retrieval** (BM25, keyword search) represents a passage as a vector
+  with one slot per word in the vocabulary. A passage uses a few hundred of
+  perhaps 50,000 words, so almost every slot is zero — the vector is *sparse*.
+- **Dense retrieval** (semantic/vector/embedding search) uses a neural model to
+  compress meaning into a short vector — 768 numbers here — where essentially
+  every number is non-zero and carries part of the meaning. No empty slots, so
+  *dense*.
+
+“Dense” therefore just means embedding-based semantic search. The arrow in
+`HyDE → semantic search` means wrapping: HyDE is a strategy sitting in front of
+a retriever, not a retriever itself.
+
+
 | strategy | recall | critical | answerable | passages | latency |
 |---|---|---|---|---|---|
 | keyword search (BM25/FTS5) | 54% | 47% | 4 / 11 | 5 | ~0s |
 | semantic search (nomic-embed-v1.5) | 71% | 64% | 6 / 11 | 5 | ~0s |
-| dense at equal budget (k=17) | 85% | 86% | 9 / 11 | 17 | ~0s |
-| **HyDE → dense** | **93%** | **95%** | **10 / 11** | **5** | 4s |
-| **loop×3 → dense** | **100%** | **100%** | **11 / 11** | 17 | 6s |
+| semantic search, returning 17 instead of 5 | 85% | 86% | 9 / 11 | 17 | ~0s |
+| **HyDE → semantic search** | **93%** | **95%** | **10 / 11** | **5** | 4s |
+| **iterative loop (3 rounds) → semantic search** | **100%** | **100%** | **11 / 11** | 17 | 6s |
 | full context (p527+p925, ~80k tok) | 100% | 100% | 11 / 11 | — | ~0s |
 
 ### Plain retrieval is not enough, and more of it does not fix it
@@ -93,7 +109,8 @@ None of those terms appear in the question. HyDE reaches the same vocabulary in
 one shot by writing the passage it expects to exist, then searching with that.
 
 **HyDE is the efficiency result**: 10/11 on the *same five passages* as plain
-dense, for one extra model call. It beats single-shot dense at k=17 (9/11)
+semantic search, for one extra model call. It beats a single semantic search
+returning 17 passages (9/11)
 while putting a third as much in the context window.
 
 **The loop is the completeness result**: 11/11, matching full context on 17
@@ -102,7 +119,8 @@ passages instead of 80k tokens.
 ### The fairness check that matters
 
 A loop sees more passages than a single shot, so beating single-shot k=5 proves
-nothing on its own. At the loop's own budget, single-shot dense scores 9/11 —
+nothing on its own. At the loop's own budget, a single semantic search scores
+9/11 —
 so of the naive 6→11 improvement, +3 is simply seeing more and +2 is the loop
 itself. The loop's advantage is real but smaller than the headline suggests,
 which is why `passages_seen` is recorded for every strategy.
