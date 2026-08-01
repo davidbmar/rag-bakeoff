@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>What we learned measuring six RAG systems</title>
+<title>The retriever was never the problem — when document search fails silently</title>
 <style>
   :root {
     --bg: #fbfaf8; --fg: #1c1b19; --muted: #6b6862; --rule: #e3e0da;
@@ -73,23 +73,208 @@
 <header>
   <h1>The retriever was never the problem</h1>
   <p class="standfirst">
-    Six document-QA systems, one tax question none of them could answer, and
-    what a day of measurement turned up.
+    A tax question whose answer is nowhere in the words you would use to ask
+    it — and five techniques measured against it to find out which ones can
+    cross that gap.
   </p>
   <p class="meta">rag-bakeoff · 13 questions · 5 IRS publications · 393k tokens</p>
 </header>
 
+<h2>The problem</h2>
+
 <p class="lede">
-  It started with a question a person would actually ask: <em>“I had more
-  expenses than rent on my rental house this year. Should I deduct the loss
-  below zero? What are the pros and cons?”</em>
+  Ask a chatbot a question about your own documents and something specific
+  happens under the hood. The system does not read all of your documents — it
+  cannot; they do not fit. Instead it <em>searches</em> them, pulls back the
+  handful of passages that look most relevant to your question, and shows only
+  those to the language model, which then writes an answer from them.
 </p>
 
 <p>
-  That question is governed by the passive activity loss rules, the $25,000
-  special allowance and its phase-out, the at-risk limits, and depreciation
-  recapture years later. It contains none of those words. Which turns out to be
-  the whole story.
+  This is called retrieval-augmented generation, and nearly every
+  “chat with your documents” product works this way. It rests on one
+  assumption that is almost never examined:
+</p>
+
+<div class="callout">
+  <p>
+    <strong>That the passages which look like your question are the passages
+    that answer it.</strong>
+  </p>
+</div>
+
+<p>
+  Usually that holds. Ask “how many years do I depreciate a rental property?”
+  and the paragraph containing the answer also contains the words “depreciate”
+  and “rental property”. Search finds it. Everyone is happy.
+</p>
+
+<p>
+  This document is about the case where the assumption fails — where the
+  passage that answers you looks nothing like the question you asked. When that
+  happens the system does not tell you it failed. It returns five plausible,
+  on-topic passages, the model writes a fluent answer from them, and the answer
+  is wrong in a way you cannot see. For a question with money or legal exposure
+  attached, that is the worst behaviour available.
+</p>
+
+<h2>A question built to break it</h2>
+
+<p class="lede">
+  Suppose you own a rental house. This year its expenses ran higher than its
+  rent, so on paper it lost money. Suppose also that your income is above the
+  limit for writing that loss off against your salary. Should you take the loss
+  anyway? What are the pros and cons?
+</p>
+
+<p>
+  The real answer runs roughly like this, and every piece of it is written down
+  in the IRS publications:
+</p>
+
+<ul class="tight">
+  <li>
+    Rental losses are <strong>passive</strong>. By default they cannot reduce
+    the tax on ordinary wages at all.
+  </li>
+  <li>
+    There is an exception — a <strong>special allowance</strong> of up to
+    $25,000 — but it <strong>phases out</strong> as income rises and is gone
+    entirely above a threshold. The setup says you are past it, so the
+    exception does not apply to you.
+  </li>
+  <li>
+    So the loss is <strong>suspended</strong>: not lost, but not usable now. It
+    carries forward and is released when you eventually <strong>dispose</strong>
+    of the property.
+  </li>
+  <li>
+    Meanwhile <strong>depreciation</strong> is not optional in the way people
+    assume, and it comes back as <strong>recapture</strong> when you sell —
+    which is the genuine “con” the question asks about, arriving years after
+    the decision.
+  </li>
+</ul>
+
+<p>
+  <strong>Now count the words that question and answer have in common.</strong>
+  The asker said “rental house”, “expenses”, “write off”, “over the limit”. The
+  documents say “passive activity”, “special allowance”, “modified adjusted
+  gross income”, “disposition of an entire interest”, “recapture”. They share
+  essentially nothing.
+</p>
+
+<p>
+  The obvious objection is that modern search does not match words, it matches
+  <em>meaning</em> — that is what embeddings do, and “write off more than it
+  earns” ought to land near “passive activity loss” in that space.
+</p>
+
+<div class="callout">
+  <p>
+    <strong>It does not, and the reason generalises.</strong> Semantic search
+    still needs the concept to be present in the query in <em>some</em> form,
+    because it can only measure similarity to what you gave it. Here the
+    governing rule is not a paraphrase of the question. It is a rule the asker
+    does not know exists — which is exactly why they are asking. You cannot be
+    similar to a thing you have never heard of.
+  </p>
+</div>
+
+<p>
+  So this is not a hard question because the corpus is large or badly written.
+  It is hard because of a structural property that any expert domain has:
+  <strong>the person with the question uses lay words; the document with the
+  answer uses terms of art; and knowing the term of art is most of the
+  expertise.</strong> Tax is the example here. Medicine, law, and any technical
+  support corpus behave the same way.
+</p>
+
+<h2>What was tested</h2>
+
+<p>
+  Thirteen questions of this shape, over five US tax publications — roughly
+  1.6 million characters — run through five different approaches. Two of them
+  are working internal systems built at different times for different projects;
+  the other three are techniques layered on top. The aim was not to rank
+  products. It was to find out which approaches can cross a vocabulary gap, and
+  to establish that the ones which cannot, cannot — however good their index
+  is.
+</p>
+
+<h2>The five approaches</h2>
+
+<h3>1. Keyword search (BM25)</h3>
+<p>
+  The classic. Score documents by which of the query's words they contain,
+  weighting rare words more heavily than common ones. Fast, transparent,
+  decades old, and still the default in most databases. Its weakness is
+  obvious here: if the answer never uses your words, it cannot find the answer.
+</p>
+
+<h3>2. Semantic search (embeddings)</h3>
+<p>
+  The modern default. A neural model converts every passage into a list of
+  numbers — a vector — positioned so that passages meaning similar things land
+  near each other. Your question is converted the same way, and the search
+  returns whatever is nearest. This genuinely handles paraphrase: “car” finds
+  “automobile”. The open question of this exercise is whether it handles
+  something harder than paraphrase.
+</p>
+
+<h3>3. HyDE — searching with a made-up answer</h3>
+<p>
+  HyDE stands for <strong>Hypothetical Document Embeddings</strong>, introduced
+  in 2022 in a paper called <em>Precise Zero-Shot Dense Retrieval without
+  Relevance Labels</em>. It addresses a specific awkwardness in how semantic
+  search works.
+</p>
+<p>
+  Embedding models place questions and documents in one shared space, but
+  questions and documents are different kinds of writing. A question is short
+  and interrogative. A document passage is long, declarative and full of
+  domain vocabulary. Measuring the distance between the two is a weaker signal
+  than measuring the distance between <em>two passages</em>, which is what these
+  models are really good at.
+</p>
+<p>
+  HyDE's move is to stop comparing apples to oranges. Ask the language model to
+  write the passage it <em>imagines</em> would answer the question — a fake
+  document — and then search using that instead. Now you are comparing a
+  passage to passages, which is the comparison the model does well.
+</p>
+<div class="callout">
+  <p>
+    The part that sounds wrong: <strong>the made-up answer does not have to be
+    correct.</strong> It is never shown to anyone and never becomes the answer.
+    It is thrown away the instant the search returns. All that is asked of it is
+    to contain roughly the right <em>words</em> — and a model that knows the
+    domain will produce “passive activity loss”, “modified adjusted gross
+    income” and “section 469” even while getting a threshold wrong.
+  </p>
+  <p>
+    You are deliberately inducing a hallucination and using it as a search key.
+    The retrieved passages, which are real, then ground the actual answer.
+  </p>
+</div>
+
+<h3>4. The iterative loop</h3>
+<p>
+  Search, read what came back, work out what is still missing, search again for
+  that, and repeat. It is what a competent researcher does, and something a
+  single query cannot do by construction — you cannot know what you failed to
+  find until you look at what you found. The version tested here runs at most
+  three rounds and stops early when the model reports it has enough, which
+  doubles as a signal that it is ready to answer.
+</p>
+
+<h3>5. No search at all</h3>
+<p>
+  Put the relevant documents into the prompt in their entirety and let the model
+  read everything. Modern models accept enough text that for a small corpus this
+  is simply possible, and it removes every retrieval failure by removing
+  retrieval. It is included as the control, because an approach that cannot beat
+  “just read it all” is hard to justify on a corpus that fits.
 </p>
 
 <h2>What was measured, and why not answers</h2>
@@ -115,33 +300,42 @@
 <table>
   <thead>
     <tr>
-      <th>Strategy</th><th>Retrieval</th>
+      <th>Approach</th><th>How it searches</th>
       <th class="num">Recall</th><th class="num">Critical</th>
       <th class="num">Answerable</th><th class="num">Passages</th><th class="num">Latency</th>
     </tr>
   </thead>
   <tbody>
-    <tr><td>intelligence-platform</td><td>BM25 / FTS5</td>
+    <tr><td>Keyword search</td><td>BM25 — word overlap</td>
         <td class="num">54%</td><td class="num">47%</td><td class="num">4 / 11</td>
         <td class="num">5</td><td class="num">15 ms</td></tr>
-    <tr><td>voice-optimal-RAG</td><td>dense, nomic-embed-v1.5</td>
+    <tr><td>Semantic search</td><td>embeddings — meaning similarity</td>
         <td class="num">71%</td><td class="num">64%</td><td class="num">6 / 11</td>
         <td class="num">5</td><td class="num">48 ms</td></tr>
-    <tr class="baseline"><td>dense at equal budget</td><td>same, k=17</td>
+    <tr class="baseline"><td>Semantic, 3× more passages</td><td>same, returning 17 instead of 5</td>
         <td class="num">85%</td><td class="num">86%</td><td class="num">9 / 11</td>
         <td class="num">17</td><td class="num">~50 ms</td></tr>
-    <tr class="win"><td>HyDE → dense</td><td>hypothetical-document query</td>
+    <tr class="win"><td>HyDE → semantic</td><td>search with a <em>drafted answer</em>, not the question</td>
         <td class="num">93%</td><td class="num">95%</td><td class="num">10 / 11</td>
         <td class="num">5</td><td class="num">4.0 s</td></tr>
-    <tr class="win"><td>loop ×3 → dense</td><td>iterative, 3 rounds</td>
+    <tr class="win"><td>Iterative loop → semantic</td><td>search, read, notice what's missing, search again</td>
         <td class="num">100%</td><td class="num">100%</td><td class="num">11 / 11</td>
         <td class="num">17</td><td class="num">6.0 s</td></tr>
-    <tr class="baseline"><td>full context</td><td>none — 80k tokens in the prompt</td>
+    <tr class="baseline"><td>No search at all</td><td>put the two relevant publications in the prompt</td>
         <td class="num">100%</td><td class="num">100%</td><td class="num">11 / 11</td>
         <td class="num">—</td><td class="num">~0 ms</td></tr>
   </tbody>
 </table>
 </div>
+
+<p>
+  <strong>Recall</strong> is the share of required concepts the search actually
+  returned. <strong>Answerable</strong> counts questions where it returned
+  <em>every</em> concept marked critical — a partial answer to a tax question
+  is not partial credit. <strong>Passages</strong> matters because an approach
+  that reads more of the corpus should be expected to find more; the comparison
+  is only fair when that is held constant, which is what the third row is for.
+</p>
 
 <p>
   <strong>Critical</strong> counts only the concepts whose absence makes the
@@ -168,19 +362,36 @@ round 3: passive activity loss limitation deduction ordering rules
 
 <p>
   Not one of those phrases appears in the question. The model read what came
-  back, noticed what was missing, and searched again in the corpus's own
-  vocabulary. HyDE reaches the same place in a single shot by writing the
-  passage it expects to exist — <em>“…subject to the passive activity loss
-  limitations under section 469…”</em> — and searching with that instead of
-  with the question.
+  back in round one, saw the governing rule was missing, and went looking for it
+  by name.
+</p>
+
+<p>
+  HyDE arrives in the same place in a single step. This is the fake answer it
+  wrote for that question, before any searching happened:
+</p>
+
+<pre><code>"You may deduct rental expenses in excess of rental income, subject to
+ the passive activity loss limitations under section 469. If you actively
+ participate and your modified adjusted gross income is $100,000 or less,
+ you may deduct up to $25,000 against nonpassive income. Suspended
+ passive losses disallowed in the current year may be carried..."</code></pre>
+
+<p>
+  Search with <em>that</em> instead of the question and the right passages come
+  back immediately. Note what happened: the draft supplied “passive activity
+  loss”, “section 469”, “modified adjusted gross income”, “nonpassive”,
+  “suspended” — every term the asker lacked. Then it was discarded. One extra
+  model call converted a question phrased in lay terms into a query phrased in
+  terms of art, which is exactly the bridge the problem needed.
 </p>
 
 <div class="callout">
   <p>
-    <strong>This is the finding.</strong> The gap is <em>query-side</em>, not
-    index-side. Six engines were built over the years and none of them was the
-    problem. Asking any of them a single question phrased in the caller's
-    vocabulary was.
+    <strong>This is the finding.</strong> The gap is on the <em>question</em>
+    side, not the index side. Both search engines tested had a perfectly good
+    index — the answer was sitting in it the whole time. What failed was
+    walking up to that index once, holding the words the asker happened to use.
   </p>
 </div>
 
@@ -188,7 +399,7 @@ round 3: passive activity loss limitation deduction ordering rules
 
 <div class="lesson">
   <span class="lesson-n">01</span>
-  <h3>Question type predicts failure; engine quality barely does</h3>
+  <h3>The kind of question predicts failure; the search engine barely does</h3>
   <p>
     Every factual lookup passed on every engine. Every strategy, vocabulary-gap
     and multi-hop question failed on plain retrieval, on both engines, at every
@@ -201,18 +412,18 @@ round 3: passive activity loss limitation deduction ordering rules
   <span class="lesson-n">02</span>
   <h3>Better embeddings help and do not save you</h3>
   <p>
-    Dense beat BM25 by 17 points — real, and worth having. It still failed the
+    Semantic search beat keyword search by 17 points — real, and worth having. It still failed the
     question that prompted the whole exercise, scoring <span class="bad">14%</span>
-    where keyword search managed 43%. No embedding model fixes a query that
+    where plain keyword search managed 43%. No embedding model fixes a query that
     does not contain the concept.
   </p>
 </div>
 
 <div class="lesson">
   <span class="lesson-n">03</span>
-  <h3>Lexical and dense fail on different questions</h3>
+  <h3>Keyword and semantic search fail on different questions</h3>
   <p>
-    BM25 alone answered 4 of 11, dense 6, their union 7. That is the honest case
+    Keyword search alone answered 4 of 11, semantic 6, the two combined 7. That is the honest case
     for hybrid retrieval — and also its ceiling, assuming perfect fusion. Still
     four short of simply loading the right two publications.
   </p>
@@ -220,7 +431,7 @@ round 3: passive activity loss limitation deduction ordering rules
 
 <div class="lesson">
   <span class="lesson-n">04</span>
-  <h3>Count the passages, or multi-round strategies flatter themselves</h3>
+  <h3>Count the passages, or repeated searching flatters itself</h3>
   <p>
     The loop went from 6/11 to 11/11 — but it saw 17 passages against five. At
     <em>equal budget</em>, single-shot dense scores 9/11. So <span class="good">+3
@@ -234,13 +445,16 @@ round 3: passive activity loss limitation deduction ordering rules
   <span class="lesson-n">05</span>
   <h3>A score that cannot discriminate cannot abstain</h3>
   <p>
-    The production engine's <code>normalized_score</code> is scaled per query,
-    so the top hit is always exactly 1.000. Its raw BM25 score for <em>“what is
-    the corporate tax rate for a C corporation”</em> — a question the corpus
-    cannot answer — came back <span class="bad">higher</span> than for a
-    genuine in-corpus question. It only goes quiet on queries sharing no
-    vocabulary at all. Nothing built on top of it can say “I don't know”, which
-    for advice is the worst available failure.
+    Two of the thirteen questions were deliberately unanswerable from this
+    corpus, to see whether the systems could tell. The keyword engine reports a
+    relevance score rescaled per query, so its best result is always exactly
+    1.000 no matter how bad it is. On the underlying raw score, <em>“what is the
+    corporate tax rate for a C corporation”</em> — nowhere in these documents —
+    scored <span class="bad">higher</span> than a genuine in-corpus question. It
+    only goes quiet on a query sharing no vocabulary at all, like a question
+    about baking bread. So it cannot distinguish “I found the answer” from “I
+    found something tax-shaped”, and nothing built on top of it can honestly
+    say <em>I don't know</em> — which for advice is the worst failure available.
   </p>
 </div>
 
@@ -257,12 +471,16 @@ round 3: passive activity loss limitation deduction ordering rules
 
 <div class="lesson">
   <span class="lesson-n">07</span>
-  <h3>Six implementations existed because nothing was ever measured</h3>
+  <h3>Duplicated systems are a symptom of missing measurement</h3>
   <p>
-    With no way to tell whether a new system beat an old one, building the
-    seventh always looked as reasonable as improving the third. The eval that
-    settles it took a day and would have prevented years of parallel building.
-    It is also the cheapest artifact here to keep.
+    The codebase this came from had accumulated six separate “ask questions
+    about documents” implementations, sharing no code, built over about a year.
+    None had ever been compared to another. That is the actual cause: with no
+    way to tell whether a new one beat an existing one, starting fresh always
+    looked as defensible as improving what was there. A question set with
+    written-down answers takes a day to build and settles it permanently — and
+    it is the cheapest thing here to keep, because it outlives every engine it
+    judges.
   </p>
 </div>
 
